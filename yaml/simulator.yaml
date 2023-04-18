@@ -153,3 +153,12 @@
   sim:
     cmd: >
       python3 <cwd>/pygen/pygen_src/test/<test_name>.py <sim_opts>
+
+- tool: euvm
+  compile:
+    cmd:
+      # Assume that eUVM-based generator is pre-built
+      - "true"
+  sim:
+    cmd: >
+      <cwd>/euvm/build/riscv_instr_gen <sim_opts>

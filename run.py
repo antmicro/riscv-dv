@@ -323,9 +323,19 @@ def do_simulate(sim_cmd, simulator, test_list, cwd, sim_opts, seed_gen,
                         if simulator == "pyflow":
                             test['gen_opts'] = re.sub("\+", "--",
                                                       test['gen_opts'])
-                            cmd += test['gen_opts']
-                        else:
-                            cmd += test['gen_opts']
+                        elif simulator == "euvm":
+                            gen_opts = []
+                            for opt in test['gen_opts'].split():
+                                # For some reason eUVM expects 'true'/'false'
+                                # instead of '1'/'0' for boolean options. Process
+                                # gen_opts accordingly.
+                                if opt.startswith("+no_"):
+                                    opt, val = opt.split("=", maxsplit=1)
+                                    val = "true" if val else "false"
+                                    opt = "{}={}".format(opt, val)
+                                gen_opts.append(opt)
+                            test['gen_opts'] = " ".join(gen_opts)
+                        cmd += test['gen_opts']
                     if not re.search("c", isa):
                         cmd += "+disable_compressed_instr=1 "
                     if lsf_cmd:
