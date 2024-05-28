@@ -934,44 +934,50 @@ def load_config(args, cwd):
             args.core_setting_dir = cwd + "/pygen/pygen_src/target/" + args.target
         else:
             args.core_setting_dir = cwd + "/target/" + args.target
+
         if args.target == "rv32imc":
-            args.mabi = "ilp32"
-            args.isa = "rv32imc"
+            mabi = "ilp32"
+            isa = "rv32imc"
         elif args.target == "rv32imafdc":
-            args.mabi = "ilp32"
-            args.isa = "rv32imafdc"
+            mabi = "ilp32"
+            isa = "rv32imafdc"
         elif args.target == "rv32imc_sv32":
-            args.mabi = "ilp32"
-            args.isa = "rv32imc"
+            mabi = "ilp32"
+            isa = "rv32imc"
         elif args.target == "multi_harts":
-            args.mabi = "ilp32"
-            args.isa = "rv32gc"
+            mabi = "ilp32"
+            isa = "rv32gc"
         elif args.target == "rv32imcb":
-            args.mabi = "ilp32"
-            args.isa = "rv32imcb"
+            mabi = "ilp32"
+            isa = "rv32imcb"
         elif args.target == "rv32i":
-            args.mabi = "ilp32"
-            args.isa = "rv32i"
+            mabi = "ilp32"
+            isa = "rv32i"
         elif args.target == "rv64imc":
-            args.mabi = "lp64"
-            args.isa = "rv64imc"
+            mabi = "lp64"
+            isa = "rv64imc"
         elif args.target == "rv64imcb":
-            args.mabi = "lp64"
-            args.isa = "rv64imcb"
+            mabi = "lp64"
+            isa = "rv64imcb"
         elif args.target == "rv64gc":
-            args.mabi = "lp64"
-            args.isa = "rv64gc"
+            mabi = "lp64"
+            isa = "rv64gc"
         elif args.target == "rv64gcv":
-            args.mabi = "lp64"
-            args.isa = "rv64gcv"
+            mabi = "lp64"
+            isa = "rv64gcv"
         elif args.target == "ml":
-            args.mabi = "lp64"
-            args.isa = "rv64imc"
+            mabi = "lp64"
+            isa = "rv64imc"
         elif args.target == "rv64imafdc":
-            args.mabi = "lp64"
-            args.isa = "rv64imafdc"
+            mabi = "lp64"
+            isa = "rv64imafdc"
         else:
             sys.exit("Unsupported pre-defined target: {}".format(args.target))
+
+        if not args.mabi:
+            args.mabi = mabi
+        if not args.isa:
+            args.isa = isa
     else:
         if re.match(".*gcc_compile.*", args.steps) or re.match(".*iss_sim.*",
                                                                args.steps):
