@@ -433,7 +433,7 @@ class riscv_load_store_rand_addr_instr_stream extends riscv_load_store_base_inst
   constraint addr_offset_c {
     |addr_offset[XLEN-1:20] == 1'b1;
     // TODO(taliu) Support larger address range
-    addr_offset[XLEN-1:31] == 0;
+    addr_offset[XLEN-1:26] == 0;
     addr_offset[11:0] == 0;
   }
 
