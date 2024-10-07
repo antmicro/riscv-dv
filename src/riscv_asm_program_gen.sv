@@ -1218,10 +1218,15 @@ class riscv_asm_program_gen extends uvm_object;
     gen_signature_handshake(instr, CORE_STATUS, INSTR_FAULT_EXCEPTION);
     gen_signature_handshake(.instr(instr), .signature_type(WRITE_CSR), .csr(MCAUSE));
     if (cfg.pmp_cfg.enable_pmp_exception_handler) begin
-      cfg.pmp_cfg.gen_pmp_exception_routine({cfg.gpr, cfg.scratch_reg, cfg.pmp_reg[0],
-                                             cfg.pmp_reg[1]},
-                                            INSTRUCTION_ACCESS_FAULT,
-                                            instr);
+      cfg.pmp_cfg.gen_pmp_exception_routine({
+                                            cfg.gpr[0],
+                                            cfg.gpr[1],
+                                            cfg.gpr[2],
+                                            cfg.gpr[3],
+                                            cfg.scratch_reg,
+                                            cfg.pmp_reg[0],
+                                            cfg.pmp_reg[1]
+                                            }, INSTRUCTION_ACCESS_FAULT, instr);
     end
     pop_gpr_from_kernel_stack(MSTATUS, MSCRATCH, cfg.mstatus_mprv, cfg.sp, cfg.tp, instr);
     instr.push_back("mret");
@@ -1234,10 +1239,15 @@ class riscv_asm_program_gen extends uvm_object;
     gen_signature_handshake(instr, CORE_STATUS, LOAD_FAULT_EXCEPTION);
     gen_signature_handshake(.instr(instr), .signature_type(WRITE_CSR), .csr(MCAUSE));
     if (cfg.pmp_cfg.enable_pmp_exception_handler) begin
-      cfg.pmp_cfg.gen_pmp_exception_routine({cfg.gpr, cfg.scratch_reg, cfg.pmp_reg[0],
-                                             cfg.pmp_reg[1]},
-                                            LOAD_ACCESS_FAULT,
-                                            instr);
+      cfg.pmp_cfg.gen_pmp_exception_routine({
+                                            cfg.gpr[0],
+                                            cfg.gpr[1],
+                                            cfg.gpr[2],
+                                            cfg.gpr[3],
+                                            cfg.scratch_reg,
+                                            cfg.pmp_reg[0],
+                                            cfg.pmp_reg[1]
+                                            }, LOAD_ACCESS_FAULT, instr);
     end
     pop_gpr_from_kernel_stack(MSTATUS, MSCRATCH, cfg.mstatus_mprv, cfg.sp, cfg.tp, instr);
     instr.push_back("mret");
@@ -1250,10 +1260,15 @@ class riscv_asm_program_gen extends uvm_object;
     gen_signature_handshake(instr, CORE_STATUS, STORE_FAULT_EXCEPTION);
     gen_signature_handshake(.instr(instr), .signature_type(WRITE_CSR), .csr(MCAUSE));
     if (cfg.pmp_cfg.enable_pmp_exception_handler) begin
-      cfg.pmp_cfg.gen_pmp_exception_routine({cfg.gpr, cfg.scratch_reg, cfg.pmp_reg[0],
-                                             cfg.pmp_reg[1]},
-                                            STORE_AMO_ACCESS_FAULT,
-                                            instr);
+      cfg.pmp_cfg.gen_pmp_exception_routine({
+                                            cfg.gpr[0],
+                                            cfg.gpr[1],
+                                            cfg.gpr[2],
+                                            cfg.gpr[3],
+                                            cfg.scratch_reg,
+                                            cfg.pmp_reg[0],
+                                            cfg.pmp_reg[1]
+                                            }, STORE_AMO_ACCESS_FAULT, instr);
     end
     pop_gpr_from_kernel_stack(MSTATUS, MSCRATCH, cfg.mstatus_mprv, cfg.sp, cfg.tp, instr);
     instr.push_back("mret");
