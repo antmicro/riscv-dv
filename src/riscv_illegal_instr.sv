@@ -136,7 +136,7 @@ class riscv_illegal_instr extends uvm_object;
         !(instr_bin[31:20] inside {12'h0, 12'h1, 12'h2, 12'h102, 12'h302, 12'h7b2, 12'h105});
       } else {
         // Invalid CSR instructions
-        !(instr_bin[31:20] inside {csrs});
+        !(riscv_instr_pkg::privileged_reg_t'(instr_bin[31:20]) inside {csrs});
         !(instr_bin[31:20] inside {custom_csr});
       }
     }

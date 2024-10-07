@@ -27,10 +27,10 @@ class riscv_csr_instr extends riscv_instr;
 
   constraint csr_addr_c {
     if (include_reg.size() > 0) {
-      csr inside {include_reg};
+      riscv_instr_pkg::privileged_reg_t'(csr) inside {include_reg};
     }
     if (exclude_reg.size() > 0) {
-      !(csr inside {exclude_reg});
+      !(riscv_instr_pkg::privileged_reg_t'(csr) inside {exclude_reg});
     }
   }
 
@@ -40,7 +40,7 @@ class riscv_csr_instr extends riscv_instr;
     // - Specific CSRs to write to are specified and this CSR is one
     // - No specific CSRs to write to are specified and this isn't a read-only CSR
     if(!((csr[11:10] == 2'b11 && allow_ro_write) ||
-         ((include_write_reg.size() > 0) && (csr inside {include_write_reg})) ||
+         ((include_write_reg.size() > 0) && (riscv_instr_pkg::privileged_reg_t'(csr) inside {include_write_reg})) ||
          ((csr[11:10] != 2'b11) && (include_write_reg.size() == 0)))) {
       write_csr == 1'b0;
     }
@@ -113,7 +113,7 @@ class riscv_csr_instr extends riscv_instr;
     include_write_reg.delete();
 
     foreach (initial_csrs[r]) begin
-      if (!(initial_csrs[r] inside {remove_csr})) begin
+      if (!(riscv_instr_pkg::privileged_reg_t'(initial_csrs[r]) inside {remove_csr})) begin
         include_write_reg.push_back(privileged_reg_t'(initial_csrs[r]));
       end
     end
