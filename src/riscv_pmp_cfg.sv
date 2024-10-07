@@ -103,7 +103,6 @@ class riscv_pmp_cfg extends uvm_object;
 
   constraint xwr_c {
     foreach (pmp_cfg[i]) {
-      solve mseccfg.mml before pmp_cfg[i].w, pmp_cfg[i].r;
       !(!mseccfg.mml && pmp_cfg[i].w && !pmp_cfg[i].r);
     }
   }
@@ -145,11 +144,6 @@ class riscv_pmp_cfg extends uvm_object;
   }
 
   constraint modes_before_addr_c {
-    foreach (pmp_cfg[i]) {
-      solve allow_high_addrs before pmp_cfg[i].addr, pmp_cfg[i].addr_mode;
-      solve pmp_cfg[i].a before pmp_cfg[i].addr;
-      solve pmp_cfg[i].addr_mode before pmp_cfg[i].addr;
-    }
   }
 
   constraint addr_legal_tor_c {
