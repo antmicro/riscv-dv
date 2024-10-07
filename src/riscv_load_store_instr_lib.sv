@@ -431,7 +431,7 @@ class riscv_load_store_rand_addr_instr_stream extends riscv_load_store_base_inst
 
   // Find an unused 4K page from address 1M onward
   constraint addr_offset_c {
-    |addr_offset[XLEN-1:20] == 1'b1;
+    addr_offset[XLEN-1:20] != 0;
     // TODO(taliu) Support larger address range
     addr_offset[XLEN-1:31] == 0;
     addr_offset[11:0] == 0;
