@@ -452,7 +452,6 @@ class riscv_int_numeric_corner_stream extends riscv_directed_instr_stream;
 
   function void pre_randomize();
     avail_regs = new[num_of_avail_regs];
-    super.pre_randomize();
   endfunction : pre_randomize
 
   function void post_randomize();
