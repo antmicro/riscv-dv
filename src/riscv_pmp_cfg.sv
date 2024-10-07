@@ -103,7 +103,7 @@ class riscv_pmp_cfg extends uvm_object;
 
   constraint xwr_c {
     foreach (pmp_cfg[i]) {
-      !(!mseccfg.mml && pmp_cfg[i].w && !pmp_cfg[i].r);
+      !(!mseccfg.mml);
     }
   }
 
@@ -116,77 +116,24 @@ class riscv_pmp_cfg extends uvm_object;
   }
 
   constraint address_modes_c {
-    foreach (pmp_cfg[i]) {
-      pmp_cfg[i].addr_mode >= 0;
-      if (allow_high_addrs) {
-        pmp_cfg[i].addr_mode <= XLEN;
-      } else {
-        pmp_cfg[i].addr_mode <= XLEN - 3;
-      }
-    }
   }
 
   constraint grain_addr_mode_c {
-    foreach (pmp_cfg[i]) {
-      (pmp_granularity >= 1) -> (pmp_cfg[i].a != NA4);
-    }
   }
 
   constraint addr_range_c {
-    foreach (pmp_cfg[i]) {
-      // Offset of pmp_cfg[0] is always set to 0 from main.
-      if (i != 0) {
-        pmp_cfg[i].offset inside {[1 : pmp_max_offset]};
-      } else {
-        pmp_cfg[i].offset == 0;
-      }
-    }
   }
 
   constraint modes_before_addr_c {
   }
 
   constraint addr_legal_tor_c {
-    foreach (pmp_cfg[i]) {
-      // In case illegal TOR regions are disallowed always add the constraint, otherwise make the
-      // remove the constraint for 1 in every XLEN entries.
-      if (i > 0 && pmp_cfg[i].a == TOR && (!pmp_allow_illegal_tor || pmp_cfg[i].addr_mode > 0)) {
-        pmp_cfg[i].addr > pmp_cfg[i-1].addr;
-      }
-
-      if (!allow_high_addrs) {
-        pmp_cfg[i].addr[31:29] == '0;
-      }
-    }
   }
 
   constraint addr_napot_mode_c {
-    foreach (pmp_cfg[i]) {
-      // In case NAPOT is selected make sure that we randomly select a region mode and force the
-      // address to match that mode.
-      if (pmp_cfg[i].a == NAPOT) {
-        // Make sure the bottom addr_mode - 1 bits are set to 1.
-        (pmp_cfg[i].addr & ((1 << pmp_cfg[i].addr_mode) - 1)) == ((1 << pmp_cfg[i].addr_mode) - 1);
-        if (pmp_cfg[i].addr_mode < XLEN) {
-          // Unless the largest region is selected make sure the bit just before the ones is set to 0.
-          (pmp_cfg[i].addr & (1 << pmp_cfg[i].addr_mode)) == 0;
-        }
-
-        if (!allow_high_addrs) {
-          pmp_cfg[i].addr[31:29] == '0;
-        }
-      }
-    }
   }
 
   constraint addr_na4_mode_c {
-    foreach (pmp_cfg[i]) {
-      if (pmp_cfg[i].a == NA4) {
-        if (!allow_high_addrs) {
-          pmp_cfg[i].addr[31:29] == '0;
-        }
-      }
-    }
   }
 
   function new(string name = "");
