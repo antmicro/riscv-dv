@@ -834,8 +834,10 @@ class riscv_asm_program_gen extends uvm_object;
         // all memory for both M and U mode
         cfg.pmp_cfg.gen_pmp_enable_all(cfg.scratch_reg, instr);
       end else begin
+        riscv_reg_t scratch_regs[2];
         cfg.pmp_cfg.setup_pmp();
-        cfg.pmp_cfg.gen_pmp_instr('{cfg.scratch_reg, cfg.gpr[0]}, instr);
+        scratch_regs = '{cfg.scratch_reg, cfg.gpr[0]};
+        cfg.pmp_cfg.gen_pmp_instr(scratch_regs, instr);
       end
 
       gen_section(get_label("pmp_setup", hart), instr);
