@@ -47,10 +47,10 @@ class riscv_instr_gen_config extends uvm_object;
 
   // Associate array for delegation configuration for each exception and interrupt
   // When the bit is 1, the corresponding delegation is enabled.
-  rand bit               m_mode_exception_delegation[exception_cause_t];
-  rand bit               s_mode_exception_delegation[exception_cause_t];
-  rand bit               m_mode_interrupt_delegation[interrupt_cause_t];
-  rand bit               s_mode_interrupt_delegation[interrupt_cause_t];
+  bit               m_mode_exception_delegation[exception_cause_t];
+  bit               s_mode_exception_delegation[exception_cause_t];
+  bit               m_mode_interrupt_delegation[interrupt_cause_t];
+  bit               s_mode_interrupt_delegation[interrupt_cause_t];
 
   // Priviledged mode after boot
   rand privileged_mode_t init_privileged_mode;
@@ -367,45 +367,11 @@ class riscv_instr_gen_config extends uvm_object;
   constraint exception_delegation_c {
     // Do not delegate instructino page fault to supervisor/user mode because this may introduce
     // dead loop. All the subsequent instruction fetches may fail and program cannot recover.
-    m_mode_exception_delegation[INSTRUCTION_PAGE_FAULT] == 1'b0;
-    if(force_m_delegation) {
-      foreach(m_mode_exception_delegation[i]) {
-        soft m_mode_exception_delegation[i] == 1'b1;
-      }
-      foreach(m_mode_interrupt_delegation[i]) {
-        soft m_mode_interrupt_delegation[i] == 1'b1;
-      }
-    }
-    if(force_s_delegation) {
-      foreach(s_mode_exception_delegation[i]) {
-        soft s_mode_exception_delegation[i] == 1'b1;
-      }
-      foreach(s_mode_interrupt_delegation[i]) {
-        soft s_mode_interrupt_delegation[i] == 1'b1;
-      }
-    }
   }
 
   // Spike only supports a subset of exception and interrupt delegation
   // You can modify this constraint if your ISS support different set of delegations
   constraint delegation_c {
-    foreach(m_mode_exception_delegation[i]) {
-      if(!support_supervisor_mode || no_delegation) {
-        m_mode_exception_delegation[i] == 0;
-      }
-      if(!(i inside {INSTRUCTION_ADDRESS_MISALIGNED, BREAKPOINT, ECALL_UMODE,
-                     INSTRUCTION_PAGE_FAULT, LOAD_PAGE_FAULT, STORE_AMO_PAGE_FAULT})) {
-        m_mode_exception_delegation[i] == 0;
-      }
-    }
-    foreach(m_mode_interrupt_delegation[i]) {
-      if(!support_supervisor_mode || no_delegation) {
-        m_mode_interrupt_delegation[i] == 0;
-      }
-      if(!(i inside {S_SOFTWARE_INTR, S_TIMER_INTR, S_EXTERNAL_INTR})) {
-        m_mode_interrupt_delegation[i] == 0;
-      }
-    }
   }
 
   constraint ra_c {

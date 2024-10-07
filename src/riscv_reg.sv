@@ -61,7 +61,7 @@ class riscv_reg#(type REG_T = privileged_reg_t) extends uvm_object;
   riscv_csr_t                   offset;
   privileged_level_t            privil_level;
   bit [XLEN-1:0]                val;
-  rand riscv_reg_field          fld[$];
+  riscv_reg_field          fld[$];
 
   `uvm_object_param_utils(riscv_reg#(REG_T))
 
