@@ -527,7 +527,7 @@ class riscv_asm_program_gen extends uvm_object;
     bit [DATA_WIDTH-1:0] reg_val;
     // Init general purpose registers with random values
     for(int i = 0; i < NUM_GPR; i++) begin
-      if (i inside {cfg.sp, cfg.tp}) continue;
+      if (i == cfg.sp || i == cfg.tp) continue;
       `DV_CHECK_STD_RANDOMIZE_WITH_FATAL(reg_val,
         reg_val dist {
           'h0                         :/ 1,

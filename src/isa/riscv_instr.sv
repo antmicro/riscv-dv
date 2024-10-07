@@ -154,7 +154,7 @@ class riscv_instr extends uvm_object;
     if (!cfg.no_ebreak) begin
       basic_instr = {basic_instr, EBREAK};
       foreach (riscv_instr_pkg::supported_isa[i]) begin
-        if (RV32C inside {riscv_instr_pkg::supported_isa[i]} &&
+        if (RV32C == riscv_instr_pkg::supported_isa[i] &&
             !cfg.disable_compressed_instr) begin
           basic_instr = {basic_instr, C_EBREAK};
           break;
