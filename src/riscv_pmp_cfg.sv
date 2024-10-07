@@ -59,7 +59,7 @@ class riscv_pmp_cfg extends uvm_object;
   int high_addr_proportion = 10;
 
   // pmp CSR configurations
-  rand pmp_cfg_reg_t pmp_cfg[];
+  pmp_cfg_reg_t pmp_cfg[];
 
   // Hints used during PMP generation
   bit pmp_cfg_addr_valid[];
