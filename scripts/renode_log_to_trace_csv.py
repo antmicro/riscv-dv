@@ -87,8 +87,9 @@ def process_renode_sim_log(log_name, csv_name):
                 continue
 
             # Decode state
-            fields = line.replace("REGDUMP:", "").split(",")
-            regs = {fields[i]: fields[i+1] for i in range(0, len(fields), 2)}
+            fields = line.replace("REGDUMP:", "").replace(" ", "").replace("FP/", "").split(",")
+            regs = {fields[i] if "/" not in fields[i] else fields[i].split("/")[1]: fields[i+2] for i in range(0, 18, 3)} | \
+                {fields[i].split("/")[0]: fields[i+2] for i in range(18, len(fields), 3)}
 
             # Compute state difference
             diff  = {r: regs[r] for r in known_gpr \
