@@ -76,7 +76,6 @@ class riscv_reg#(type REG_T = privileged_reg_t) extends uvm_object;
 
   virtual function bit[XLEN-1:0] get_val();
     int total_len;
-    total_len = fld.sum() with (item.bit_width);
     if(total_len != XLEN) begin
       foreach(fld[i])
         $display(fld[i].convert2string());
