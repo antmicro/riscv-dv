@@ -218,7 +218,9 @@ class riscv_rand_instr_stream extends riscv_instr_stream;
                                   bit is_debug_program = 1'b0);
     setup_allowed_instr(no_branch, no_load_store);
     foreach(instr_list[i]) begin
-      randomize_instr(instr_list[i], is_debug_program);
+       riscv_instr instr;
+       randomize_instr(instr, is_debug_program);
+       instr_list[i] = instr;
     end
     // Do not allow branch instruction as the last instruction because there's no
     // forward branch target
