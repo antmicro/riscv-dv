@@ -24,7 +24,7 @@ class riscv_page_table#(satp_mode_t MODE = SV39) extends uvm_object;
   int unsigned                        table_id;      // Page table ID
   bit [1:0]                           level;         // Page table level
   bit [XLEN-1:0]                      pte_binary[];  // Page table entry in binary format
-  rand riscv_page_table_entry#(MODE)  pte[];         // List of all page table entries
+  riscv_page_table_entry#(MODE)       pte[];         // List of all page table entries
 
   `uvm_object_param_utils(riscv_page_table#(MODE))
   `uvm_object_new
