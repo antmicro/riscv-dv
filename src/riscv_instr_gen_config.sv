@@ -276,8 +276,6 @@ class riscv_instr_gen_config extends uvm_object;
 
 
   constraint default_c {
-    sub_program_instr_cnt.size() == num_of_sub_program;
-    debug_sub_program_instr_cnt.size() == num_debug_sub_program;
     main_program_instr_cnt inside {[10 : instr_cnt]};
     foreach(sub_program_instr_cnt[i]) {
       sub_program_instr_cnt[i] inside {[10 : instr_cnt]};
@@ -711,6 +709,8 @@ class riscv_instr_gen_config extends uvm_object;
   endfunction
 
   function void pre_randomize();
+    sub_program_instr_cnt = new[num_of_sub_program];
+    debug_sub_program_instr_cnt = new[num_debug_sub_program];
     foreach (riscv_instr_pkg::supported_privileged_mode[i]) begin
       if(riscv_instr_pkg::supported_privileged_mode[i] == SUPERVISOR_MODE)
         support_supervisor_mode = 1;
