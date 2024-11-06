@@ -160,7 +160,9 @@ class riscv_asm_program_gen:
   def gen_program_end(self):
     # TODO: this instruction puts Spike in an infinite loop. For now, I just
     # replace it with "writing 1 into tohost" to tell Spike to exit.
-    self.gen_section("write_tohost", ["sw gp, tohost, t5"])
+
+    # end verilator with 0xff
+    self.gen_section("write_tohost", ["li gp, 0xff", "sw gp, tohost, t5"])
     # self.gen_section("write_tohost", ["li t0, 1", "la t1, tohost", "sw t0, 0(t1)"])
     self.gen_section("_exit", ["j write_tohost"])
 

@@ -276,8 +276,8 @@ class riscv_asm_program_gen:
 
     def gen_program_end(self, hart):
         if hart == 0:
-            # Use write_tohost to terminate spike simulation
-            self.gen_section("write_tohost", ["sw gp, tohost, t5"])
+            # Use write_tohost to terminate verilator/spike simulation
+            self.gen_section("write_tohost", ["li gp, 0xff", "sw gp, tohost, t5"])
             self.gen_section("_exit", ["j write_tohost"])
 
     def gen_data_page_begin(self, hart):

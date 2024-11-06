@@ -387,8 +387,8 @@ class riscv_asm_program_gen : uvm_object
 
   void gen_program_end(int hart) {
     if (hart == 0) {
-      // Use write_tohost to terminate spike simulation
-      gen_section("write_tohost", ["sw gp, tohost, t5"]);
+      // Use write_tohost to terminate verilator/spike simulation
+      gen_section("write_tohost", ["li gp, 0xff", "sw gp, tohost, t5"]);
       gen_section("_exit", ["j write_tohost"]);
     }
   }
