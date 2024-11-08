@@ -45,7 +45,6 @@ class riscv_load_store_base_instr_stream extends riscv_mem_access_stream;
   }
 
   constraint sp_c {
-    use_sp_as_rs1 dist {1 := 1, 0 := 2};
     if (use_sp_as_rs1) {
       rs1_reg == SP;
     }

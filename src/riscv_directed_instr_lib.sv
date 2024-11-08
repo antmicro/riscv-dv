@@ -247,7 +247,6 @@ class riscv_jal_instr extends riscv_rand_instr_stream;
       jump[i] = riscv_instr::get_rand_instr(.include_instr({jal}));
       `DV_CHECK_RANDOMIZE_WITH_FATAL(jump[i],
         if (has_rd) {
-          rd dist {RA := 5, T1 := 2, [SP:T0] :/ 1, [T2:T6] :/ 2};
           !(rd inside {cfg.reserved_regs});
         }
       )

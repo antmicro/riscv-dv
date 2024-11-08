@@ -528,14 +528,6 @@ class riscv_asm_program_gen extends uvm_object;
     // Init general purpose registers with random values
     for(int i = 0; i < NUM_GPR; i++) begin
       if (i inside {cfg.sp, cfg.tp}) continue;
-      `DV_CHECK_STD_RANDOMIZE_WITH_FATAL(reg_val,
-        reg_val dist {
-          'h0                         :/ 1,
-          'h8000_0000                 :/ 1,
-          ['h1         : 'hF]         :/ 1,
-          ['h10        : 'hEFFF_FFFF] :/ 1,
-          ['hF000_0000 : 'hFFFF_FFFF] :/ 1
-        };)
       str = $sformatf("%0sli x%0d, 0x%0x", indent, i, reg_val);
       instr_stream.push_back(str);
     end

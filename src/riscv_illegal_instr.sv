@@ -87,15 +87,6 @@ class riscv_illegal_instr extends uvm_object;
   privileged_reg_t           csrs[$];
 
   constraint exception_dist_c {
-    exception dist {
-      kIllegalOpcode           := 3,
-      kIllegalCompressedOpcode := 1,
-      kIllegalFunc3            := 1,
-      kIllegalFunc7            := 1,
-      kReservedCompressedInstr := 1,
-      kHintInstr               := 3,
-      kIllegalSystemInstr      := 3
-    };
     if (!(RV32C inside {supported_isa})) {
       exception != kHintInstr;
       compressed == 1'b0;

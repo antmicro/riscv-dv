@@ -108,8 +108,6 @@ class riscv_pmp_cfg extends uvm_object;
   }
 
   constraint allow_high_addrs_c {
-    allow_high_addrs dist { 0 := 100 - high_addr_proportion,
-                            1 := high_addr_proportion };
     if (XLEN == 64) {
       allow_high_addrs == 1'b1;
     }
