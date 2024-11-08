@@ -321,8 +321,6 @@ class riscv_multi_page_load_store_instr_stream extends riscv_mem_access_stream;
     foreach(data_page_id[i]) {
       data_page_id[i] < max_data_page_id;
     }
-    data_page_id.size() == num_of_instr_stream;
-    rs1_reg.size() == num_of_instr_stream;
     foreach(rs1_reg[i]) {
       !(rs1_reg[i] inside {cfg.reserved_regs, ZERO});
     }

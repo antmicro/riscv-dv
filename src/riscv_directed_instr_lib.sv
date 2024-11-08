@@ -432,8 +432,6 @@ class riscv_int_numeric_corner_stream extends riscv_directed_instr_stream;
   riscv_pseudo_instr  init_instr[];
 
   constraint init_val_c {
-    init_val_type.size() == num_of_avail_regs;
-    init_val.size() == num_of_avail_regs;
     num_of_instr inside {[15:30]};
   }
 

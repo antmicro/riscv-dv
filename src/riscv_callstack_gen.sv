@@ -86,7 +86,6 @@ class riscv_callstack_gen extends uvm_object;
 
   constraint program_stack_level_c {
     // The stack level is assigned in ascending order to avoid call loop
-    stack_level.size() == program_cnt;
     stack_level[0] == 0;
     foreach(stack_level[i]) {
       if(i > 0) {

@@ -33,8 +33,6 @@ class riscv_amo_base_instr_stream extends riscv_mem_access_stream;
   }
 
   constraint rs1_c {
-    rs1_reg.size() == num_of_rs1_reg;
-    offset.size() == num_of_rs1_reg;
     foreach (rs1_reg[i]) {
       !(rs1_reg[i] inside {cfg.reserved_regs, reserved_rd, ZERO});
     }

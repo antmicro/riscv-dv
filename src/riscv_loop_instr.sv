@@ -46,17 +46,11 @@ class riscv_loop_instr extends riscv_rand_instr_stream;
         loop_limit_reg[i] != cfg.reserved_regs[j];
       }
     }
-    loop_cnt_reg.size() == num_of_nested_loop;
-    loop_limit_reg.size() == num_of_nested_loop;
   }
 
   constraint loop_c {
     num_of_instr_in_loop inside {[1:25]};
     num_of_nested_loop inside {[1:2]};
-    loop_init_val.size() == num_of_nested_loop;
-    loop_step_val.size() == num_of_nested_loop;
-    loop_limit_val.size() == num_of_nested_loop;
-    branch_type.size() == num_of_nested_loop;
     foreach (branch_type[i]) {
       if (!cfg.disable_compressed_instr) {
         branch_type[i] inside {C_BNEZ, C_BEQZ, BEQ, BNE, BLTU, BLT, BGEU, BGE};
