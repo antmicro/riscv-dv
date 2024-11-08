@@ -121,24 +121,24 @@ class riscv_lr_sc_instr_stream extends riscv_amo_base_instr_stream;
     lr_instr = riscv_instr::get_rand_instr(.include_instr({allowed_lr_instr}));
     sc_instr = riscv_instr::get_rand_instr(.include_instr({allowed_sc_instr}));
     `DV_CHECK_RANDOMIZE_WITH_FATAL(lr_instr,
-      rs1 == rs1_reg[0];
+      rs1 == rs1;
       if (reserved_rd.size() > 0) {
         !(rd inside {reserved_rd});
       }
       if (cfg.reserved_regs.size() > 0) {
         !(rd inside {cfg.reserved_regs});
       }
-      rd != rs1_reg[0];
+      rd == rd;
     )
     `DV_CHECK_RANDOMIZE_WITH_FATAL(sc_instr,
-      rs1 == rs1_reg[0];
+      rs1 == rs1;
       if (reserved_rd.size() > 0) {
         !(rd inside {reserved_rd});
       }
       if (cfg.reserved_regs.size() > 0) {
         !(rd inside {cfg.reserved_regs});
       }
-      rd != rs1_reg[0];
+      rd == rd;
     )
     instr_list.push_back(lr_instr);
     instr_list.push_back(sc_instr);

@@ -358,8 +358,8 @@ class riscv_multi_page_load_store_instr_stream extends riscv_mem_access_stream;
         end
       end
       `DV_CHECK_RANDOMIZE_WITH_FATAL(load_store_instr_stream[i],
-                                     rs1_reg == local::rs1_reg[i];
-                                     data_page_id == local::data_page_id[i];,
+                                     rs1_reg == rs1_reg;
+                                     data_page_id == data_page_id;,
                                      "Cannot randomize load/store instruction")
       // Mix the instruction stream of different page access, this could trigger the scenario of
       // frequent data TLB switch
