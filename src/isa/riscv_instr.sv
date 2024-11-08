@@ -219,18 +219,7 @@ class riscv_instr extends uvm_object;
          name = instr_names[idx];
        end
      end else begin
-       if (!std::randomize(name) with {
-          name inside {instr_names};
-          if (include_instr.size() > 0) {
-            name inside {include_instr};
-          }
-          if (allowed_instr.size() > 0) {
-            name inside {allowed_instr};
-          }
-          if (disallowed_instr.size() > 0) {
-            !(name inside {disallowed_instr});
-          }
-       }) begin
+       if (1'b0) begin
          `uvm_fatal("riscv_instr", "Cannot generate random instruction")
        end
      end

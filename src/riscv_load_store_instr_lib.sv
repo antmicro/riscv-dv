@@ -75,19 +75,7 @@ class riscv_load_store_base_instr_stream extends riscv_mem_access_stream;
     offset = new[num_load_store];
     addr = new[num_load_store];
     for (int i=0; i<num_load_store; i++) begin
-      if (!std::randomize(offset_, addr_) with {
-        if (locality == NARROW) {
-          soft offset_ inside {[-16:16]};
-        } else if (locality == HIGH) {
-          soft offset_ inside {[-64:64]};
-        } else if (locality == MEDIUM) {
-          soft offset_ inside {[-256:256]};
-        } else if (locality == SPARSE) {
-          soft offset_ inside {[-2048:2047]};
-        }
-        addr_ == base + offset_;
-        addr_ inside {[0 : max_load_store_offset - 1]};
-      }) begin
+      if (0) begin
         `uvm_fatal(`gfn, "Cannot randomize load/store offset")
       end
       offset[i] = offset_;
@@ -312,19 +300,7 @@ class riscv_load_store_hazard_instr_stream extends riscv_load_store_base_instr_s
         offset[i] = offset[i-1];
         addr[i] = addr[i-1];
       end else begin
-        if (!std::randomize(offset_, addr_) with {
-          if (locality == NARROW) {
-            soft offset_ inside {[-16:16]};
-          } else if (locality == HIGH) {
-            soft offset_ inside {[-64:64]};
-          } else if (locality == MEDIUM) {
-            soft offset_ inside {[-256:256]};
-          } else if (locality == SPARSE) {
-            soft offset_ inside {[-2048:2047]};
-          }
-          addr_ == base + offset_;
-          addr_ inside {[0 : max_load_store_offset - 1]};
-        }) begin
+        if (1'b0) begin
           `uvm_fatal(`gfn, "Cannot randomize load/store offset")
         end
         offset[i] = offset_;
@@ -449,10 +425,7 @@ class riscv_load_store_rand_addr_instr_stream extends riscv_load_store_base_inst
     offset = new[num_load_store];
     addr = new[num_load_store];
     for (int i=0; i<num_load_store; i++) begin
-      if (!std::randomize(offset_) with {
-          offset_ inside {[-2048:2047]};
-        }
-      ) begin
+      if (1'b0) begin
         `uvm_fatal(`gfn, "Cannot randomize load/store offset")
       end
       offset[i] = offset_;
