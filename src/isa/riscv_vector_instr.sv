@@ -273,11 +273,6 @@ class riscv_vector_instr extends riscv_floating_point_instr;
 
   // load/store EEW/EMUL and corresponding register grouping constraints
   constraint load_store_solve_order_c {
-    solve eew before emul;
-    solve emul before vd;
-    solve emul before vs1;
-    solve emul before vs2;
-    solve emul before vs3;
   }
 
   constraint load_store_eew_emul_c {

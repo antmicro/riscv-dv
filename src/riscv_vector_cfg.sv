@@ -64,8 +64,6 @@ class riscv_vector_cfg extends uvm_object;
   rand bit enable_fault_only_first_load;
 
   constraint legal_c {
-    solve vtype before vl;
-    solve vl before vstart;
     vstart inside {[0:vl]};
     vl inside {[1:VLEN/vtype.vsew]};
   }

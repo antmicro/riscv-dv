@@ -94,11 +94,6 @@ class riscv_illegal_instr extends uvm_object;
   }
 
   constraint instr_bit_assignment_c {
-    solve opcode before instr_bin;
-    solve func3 before instr_bin;
-    solve func7 before instr_bin;
-    solve c_msb before instr_bin;
-    solve c_op before instr_bin;
     if (compressed) {
       instr_bin[1:0] == c_op;
       instr_bin[15:13] == c_msb;
@@ -221,11 +216,6 @@ class riscv_illegal_instr extends uvm_object;
   }
 
   constraint reserved_compressed_instr_c {
-    solve exception  before reserved_c;
-    solve exception  before opcode;
-    solve reserved_c before instr_bin;
-    solve reserved_c before c_msb;
-    solve reserved_c before c_op;
     if (XLEN == 32) {
       //c.addiw is RV64/RV128 only instruction, the encoding is used for C.JAL for RV32C
       reserved_c != kReservedAddiw;
@@ -282,7 +272,6 @@ class riscv_illegal_instr extends uvm_object;
   }
 
   constraint illegal_opcode_c {
-    solve opcode before instr_bin;
     if (exception == kIllegalOpcode) {
       !(opcode inside {legal_opcode});
       opcode[1:0] == 2'b11;
@@ -299,7 +288,6 @@ class riscv_illegal_instr extends uvm_object;
   }
 
   constraint illegal_func3_c {
-    solve opcode before func3;
     if (!compressed) {
       if (exception == kIllegalFunc3) {
         (opcode == 7'b1100111) -> (func3 != 3'b000);
@@ -337,7 +325,6 @@ class riscv_illegal_instr extends uvm_object;
   }
 
   constraint has_func7_c {
-    solve opcode before func7;
     if (((opcode == 7'b0010011) && (func3 inside {3'b001, 3'b101})) ||
         (opcode inside {7'b0110011, 7'b0111011})) {
       has_func7 == 1'b1;
@@ -347,7 +334,6 @@ class riscv_illegal_instr extends uvm_object;
   }
 
   constraint has_func3_c {
-    solve opcode before func7;
     if ((opcode inside {7'b0110111, 7'b1101111, 7'b0010111})) {
       has_func3 == 1'b0;
     } else {

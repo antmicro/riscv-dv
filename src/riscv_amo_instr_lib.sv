@@ -33,7 +33,6 @@ class riscv_amo_base_instr_stream extends riscv_mem_access_stream;
   }
 
   constraint rs1_c {
-    solve num_of_rs1_reg before rs1_reg;
     rs1_reg.size() == num_of_rs1_reg;
     offset.size() == num_of_rs1_reg;
     foreach (rs1_reg[i]) {
@@ -176,13 +175,11 @@ class riscv_amo_instr_stream extends riscv_amo_base_instr_stream;
   riscv_instr amo_instr[];
 
   constraint reasonable_c {
-    solve num_amo before num_mixed_instr;
     num_amo inside {[1 : 10]};
     num_mixed_instr inside {[0 : num_amo]};
   }
 
   constraint num_of_rs1_reg_c {
-    solve num_amo before num_of_rs1_reg;
     num_of_rs1_reg inside {[1 : num_amo]};
     num_of_rs1_reg < 5;
   }

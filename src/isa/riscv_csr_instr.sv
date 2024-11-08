@@ -69,8 +69,6 @@ class riscv_csr_instr extends riscv_instr;
     // to read or write before choosing the rs1 and imm values. This ensures read-only accesses to
     // read-only CSRs with similar probability to other CSR accesses and ensures a reasonable write
     // vs read distribution for CSRs that can be written.
-    solve csr before write_csr, rs1, imm;
-    solve write_csr before rs1, imm;
   }
 
   `uvm_object_utils(riscv_csr_instr)

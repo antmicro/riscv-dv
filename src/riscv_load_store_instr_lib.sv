@@ -41,7 +41,6 @@ class riscv_load_store_base_instr_stream extends riscv_mem_access_stream;
   `uvm_object_utils(riscv_load_store_base_instr_stream)
 
   constraint sp_rnd_order_c {
-    solve use_sp_as_rs1 before rs1_reg;
   }
 
   constraint sp_c {
@@ -55,8 +54,6 @@ class riscv_load_store_base_instr_stream extends riscv_mem_access_stream;
   }
 
   constraint addr_c {
-    solve data_page_id before max_load_store_offset;
-    solve max_load_store_offset before base;
     data_page_id < max_data_page_id;
     foreach (data_page[i]) {
       if (i == data_page_id) {
@@ -333,7 +330,6 @@ class riscv_multi_page_load_store_instr_stream extends riscv_mem_access_stream;
   }
 
   constraint page_c {
-    solve num_of_instr_stream before data_page_id;
     num_of_instr_stream inside {[1 : max_data_page_id]};
     unique {data_page_id};
   }
@@ -514,14 +510,12 @@ class riscv_vector_load_store_instr_stream extends riscv_mem_access_stream;
   }
 
   constraint stride_byte_offset_c {
-    solve eew before stride_byte_offset;
     // Keep a reasonable byte offset range to avoid vector memory address overflow
     stride_byte_offset inside {[1 : 128]};
     stride_byte_offset % (eew / 8) == 1;
   }
 
   constraint index_addr_c {
-    solve eew before index_addr;
     // Keep a reasonable index address range to avoid vector memory address overflow
     index_addr inside {[0 : 128]};
     index_addr % (eew / 8) == 1;

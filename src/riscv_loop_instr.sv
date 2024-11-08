@@ -35,8 +35,6 @@ class riscv_loop_instr extends riscv_rand_instr_stream;
   riscv_instr         loop_instr[];
 
   constraint legal_loop_regs_c {
-    solve num_of_nested_loop before loop_cnt_reg;
-    solve num_of_nested_loop before loop_limit_reg;
     foreach (loop_cnt_reg[i]) {
       loop_cnt_reg[i] != ZERO;
       foreach (cfg.reserved_regs[j]) {
@@ -54,13 +52,6 @@ class riscv_loop_instr extends riscv_rand_instr_stream;
   }
 
   constraint loop_c {
-    solve num_of_nested_loop before loop_init_val;
-    solve num_of_nested_loop before loop_step_val;
-    solve num_of_nested_loop before loop_limit_val;
-    solve loop_limit_val before loop_limit_reg;
-    solve branch_type before loop_init_val;
-    solve branch_type before loop_step_val;
-    solve branch_type before loop_limit_val;
     num_of_instr_in_loop inside {[1:25]};
     num_of_nested_loop inside {[1:2]};
     loop_init_val.size() == num_of_nested_loop;
