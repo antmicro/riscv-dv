@@ -299,9 +299,6 @@ class riscv_instr_gen_config extends uvm_object;
           debug_sub_program_instr_cnt[i] inside {[100 : 300]};
         }
       }
-    `ifndef DSIM
-       main_program_instr_cnt + sub_program_instr_cnt.sum() == instr_cnt;
-    `else
        // dsim has some issue supporting sum(), use some approximate constraint to generate
        // instruction cnt
        if (num_of_sub_program > 0) {
@@ -312,7 +309,6 @@ class riscv_instr_gen_config extends uvm_object;
        } else {
          main_program_instr_cnt == instr_cnt;
        }
-    `endif
   }
 
   // Keep the number of single step iterations relatively small
