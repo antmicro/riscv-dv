@@ -323,7 +323,6 @@ class riscv_multi_page_load_store_instr_stream extends riscv_mem_access_stream;
     }
     data_page_id.size() == num_of_instr_stream;
     rs1_reg.size() == num_of_instr_stream;
-    unique {rs1_reg};
     foreach(rs1_reg[i]) {
       !(rs1_reg[i] inside {cfg.reserved_regs, ZERO});
     }
@@ -331,7 +330,6 @@ class riscv_multi_page_load_store_instr_stream extends riscv_mem_access_stream;
 
   constraint page_c {
     num_of_instr_stream inside {[1 : max_data_page_id]};
-    unique {data_page_id};
   }
 
   // Avoid accessing a large number of pages because we may run out of registers for rs1

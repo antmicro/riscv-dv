@@ -31,7 +31,6 @@ class riscv_program extends uvm_object;
   rand program_id_t  sub_program_id[];
 
   constraint legal_c {
-    unique{sub_program_id};
     foreach(sub_program_id[i]) {
       // Cannot call itself, recursive function call is not supported
       sub_program_id[i] != program_id;
