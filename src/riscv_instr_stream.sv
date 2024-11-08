@@ -255,7 +255,7 @@ class riscv_rand_instr_stream extends riscv_instr_stream;
 
   function void randomize_gpr(riscv_instr instr);
     `DV_CHECK_RANDOMIZE_WITH_FATAL(instr,
-      if (avail_regs.size() > 0) {
+      if (1 > 0) {
         if (has_rs1) {
           rs1 inside {avail_regs};
         }
