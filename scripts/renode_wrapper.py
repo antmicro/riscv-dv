@@ -29,8 +29,11 @@ machine LoadPlatformDescription @{repl}
 
 sysbus LoadELF @{elf}
 
+# String substitution isn't possible here since this template has variables substituted before being used.
+set PRINT_REGDUMP "print('REGDUMP:PC,' + cpu.PC.ToString() + ',' + ','.join(['X' + str(i) + ',' + cpu.X[i].ToString() for i in range(32)]))"
+
 cpu MaximumBlockSize 1
-cpu SetHookAtBlockEnd "print('REGDUMP:' + ','.join(self.GetRegistersValues()))"
+cpu SetHookAtBlockEnd $PRINT_REGDUMP
 cpu InstallCustomInstructionHandlerFromString "00000000000000000000000001110011" "print('ECALL:');"
 
 emulation RunFor "0.001"
