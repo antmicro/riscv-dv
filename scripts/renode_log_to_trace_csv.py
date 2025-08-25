@@ -91,7 +91,7 @@ def process_renode_sim_log(log_name, csv_name):
 
                 # Format the entry
                 entry = RiscvInstructionTraceEntry()
-                entry.pc        = state["PC"]
+                entry.pc        = f"{int(state['PC'], 16):08x}"
                 entry.binary    = "0"
                 entry.operand   = ""
                 entry.mode      = "0"
