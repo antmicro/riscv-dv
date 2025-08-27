@@ -40,7 +40,7 @@ cpu MaximumBlockSize 1
 cpu SetHookAtBlockEnd $PRINT_REGDUMP
 cpu InstallCustomInstructionHandlerFromString "00000000000000000000000001110011" "print('ECALL:');"
 
-emulation RunFor "0.001"
+emulation RunFor "0.0008"
 
 quit
 """
