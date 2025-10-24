@@ -150,6 +150,31 @@
           -covscope default
           -covtest <test_id>.<seed>
 
+- tool: verilator
+  # UVM_HOME is set to root of uvm-verilator repo
+  env_var: UVM_HOME
+  compile:
+    cmd:
+      - "verilator
+              -cc
+              -f <cwd>/files.f
+              -sv
+              +define+UVM_NO_DPI
+              +incdir+<UVM_HOME>/src
+              +incdir+<setting>
+              +incdir+<user_extension>
+              -Wno-COVERIGN
+              <UVM_HOME>/src/uvm_pkg.sv
+              <cov_opts>"
+  sim:
+    cmd: >
+      xrun -R -xmlibdirpath <out> <sim_opts> <cov_opts> -svseed <seed> -svrnc rand_struct -nokey
+    cov_opts: >
+          -covmodeldir <out>/default/<test_id>.<seed>
+          -covworkdir <out>
+          -covscope default
+          -covtest <test_id>.<seed>
+
 - tool: pyflow
   sim:
     cmd: >
