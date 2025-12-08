@@ -152,19 +152,35 @@
 
 - tool: verilator
   # UVM_HOME is set to root of uvm-verilator repo
-  env_var: UVM_HOME
+  env_var: UVM_HOME,NPROC
   compile:
     cmd:
       - "verilator
-              -cc
+              --binary
+              <UVM_HOME>/src/uvm.sv
               -f <cwd>/files.f
               -sv
               +define+UVM_NO_DPI
               +incdir+<UVM_HOME>/src
               +incdir+<setting>
               +incdir+<user_extension>
+              -j <NPROC>
+              --output-groups <NPROC>
               -Wno-COVERIGN
-              <UVM_HOME>/src/uvm_pkg.sv
+              -Wno-CONSTRAINTIGN
+              -Wno-ENUMVALUE
+              -Wno-WIDTHEXPAND
+              -Wno-WIDTHTRUNC
+              -Wno-NORETURN
+              -Wno-CASEINCOMPLETE
+              -Wno-SYMRSVDWORD
+              -DWORKAROUND_INTERNAL_ERROR
+              -DWORKAROUND_RANDOMIZE_COMPILE_ERROR
+              -DWORKAROUND_STD_RANDOMIZE_COMPILE_ERROR
+              -DWORKAROUND_CONSTRAINT_PARSE_SOLVE_BEFORE
+              -DWORKAROUND_CONSTRAINT_COMPILE_ERROR
+              -DWORKAROUND_CONSTRAINT_REDUCTION
+              -DWORKAROUND_COVERGROUP_PARSE_BINS
               <cov_opts>"
   sim:
     cmd: >

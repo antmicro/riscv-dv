@@ -59,11 +59,13 @@ class riscv_load_store_base_instr_stream extends riscv_mem_access_stream;
     solve data_page_id before max_load_store_offset;
     solve max_load_store_offset before base;
     data_page_id < max_data_page_id;
+`ifndef WORKAROUND_CONSTRAINT_COMPILE_ERROR
     foreach (data_page[i]) {
       if (i == data_page_id) {
         max_load_store_offset == data_page[i].size_in_bytes;
       }
     }
+`endif
     base inside {[0 : max_load_store_offset-1]};
   }
 
@@ -445,7 +447,9 @@ class riscv_load_store_rand_addr_instr_stream extends riscv_load_store_base_inst
 
   // Find an unused 4K page from address 1M onward
   constraint addr_offset_c {
+`ifndef WORKAROUND_CONSTRAINT_REDUCTION
     |addr_offset[XLEN-1:20] == 1'b1;
+`endif
     // TODO(taliu) Support larger address range
     addr_offset[XLEN-1:31] == 0;
     addr_offset[11:0] == 0;
