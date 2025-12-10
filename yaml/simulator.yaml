@@ -165,6 +165,7 @@
               +incdir+<setting>
               +incdir+<user_extension>
               -j <NPROC>
+              -o <out>/Vuvm
               --output-groups <NPROC>
               -Wno-COVERIGN
               -Wno-CONSTRAINTIGN
@@ -180,16 +181,10 @@
               -DWORKAROUND_CONSTRAINT_PARSE_SOLVE_BEFORE
               -DWORKAROUND_CONSTRAINT_COMPILE_ERROR
               -DWORKAROUND_CONSTRAINT_REDUCTION
-              -DWORKAROUND_COVERGROUP_PARSE_BINS
-              <cov_opts>"
+              -DWORKAROUND_COVERGROUP_PARSE_BINS"
   sim:
     cmd: >
-      xrun -R -xmlibdirpath <out> <sim_opts> <cov_opts> -svseed <seed> -svrnc rand_struct -nokey
-    cov_opts: >
-          -covmodeldir <out>/default/<test_id>.<seed>
-          -covworkdir <out>
-          -covscope default
-          -covtest <test_id>.<seed>
+      <out>/Vuvm <sim_opts> +verilator+seed+<seed>
 
 - tool: pyflow
   sim:
