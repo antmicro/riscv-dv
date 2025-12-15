@@ -114,10 +114,12 @@ def get_generator_cmd(simulator, simulator_yaml, cov, exp, debug_cmd):
                 for env_var in entry['env_var'].split(','):
                     for i in range(len(compile_cmd)):
                         compile_cmd[i] = re.sub(
-                            "<" + env_var + ">", get_env_var(env_var, debug_cmd=debug_cmd),
+                            "<" + env_var +
+                            ">", get_env_var(env_var, debug_cmd=debug_cmd),
                             compile_cmd[i])
                     sim_cmd = re.sub(
-                        "<" + env_var + ">", get_env_var(env_var, debug_cmd=debug_cmd),
+                        "<" + env_var +
+                        ">", get_env_var(env_var, debug_cmd=debug_cmd),
                         sim_cmd)
             return compile_cmd, sim_cmd
     logging.error("Cannot find simulator {}".format(simulator))
@@ -153,26 +155,26 @@ def parse_iss_yaml(iss, iss_yaml, isa, priv, setting_dir, debug_cmd):
         if entry['iss'] == iss:
             logging.info("Found matching ISS: {}".format(entry['iss']))
             cmd = entry['cmd'].rstrip()
-            cmd = re.sub("\<path_var\>",
+            cmd = re.sub(r"\<path_var\>",
                          get_env_var(entry['path_var'], debug_cmd=debug_cmd),
                          cmd)
             m = re.search(r"rv(?P<xlen>[0-9]+?)(?P<variant>[a-zA-Z_]+?)$", isa)
             if m:
-                cmd = re.sub("\<xlen\>", m.group('xlen'), cmd)
+                cmd = re.sub(r"\<xlen\>", m.group('xlen'), cmd)
             else:
                 logging.error("Illegal ISA {}".format(isa))
             if iss == "ovpsim":
-                cmd = re.sub("\<cfg_path\>", setting_dir, cmd)
+                cmd = re.sub(r"\<cfg_path\>", setting_dir, cmd)
             elif iss == "whisper":
                 if m:
                     # TODO: Support u/s mode
                     variant = re.sub('g', 'imafd', m.group('variant'))
-                    cmd = re.sub("\<variant\>", variant, cmd)
+                    cmd = re.sub(r"\<variant\>", variant, cmd)
             else:
-                cmd = re.sub("\<variant\>", isa, cmd)
-            cmd = re.sub("\<priv\>", priv, cmd)
-            cmd = re.sub("\<scripts_path\>", scripts_dir, cmd)
-            cmd = re.sub("\<config_path\>", yaml_dir, cmd)
+                cmd = re.sub(r"\<variant\>", isa, cmd)
+            cmd = re.sub(r"\<priv\>", priv, cmd)
+            cmd = re.sub(r"\<scripts_path\>", scripts_dir, cmd)
+            cmd = re.sub(r"\<config_path\>", yaml_dir, cmd)
             return cmd
     logging.error("Cannot find ISS {}".format(iss))
     sys.exit(RET_FAIL)
@@ -189,7 +191,7 @@ def get_iss_cmd(base_cmd, elf, log):
     Returns:
       cmd      : Command for ISS simulation
     """
-    cmd = re.sub("\<elf\>", elf, base_cmd)
+    cmd = re.sub(r"\<elf\>", elf, base_cmd)
     cmd += (" &> {}".format(log))
     return cmd
 
@@ -307,25 +309,25 @@ def do_simulate(sim_cmd, simulator, test_list, cwd, sim_opts, seed_gen,
                         sim_cmd = re.sub("<test_name>", test['gen_test'],
                                          sim_cmd)
                         cmd = lsf_cmd + " " + sim_cmd.rstrip() + \
-                              (" --num_of_tests={}".format(test_cnt)) + \
-                              (" --start_idx={}".format(i * batch_size)) + \
-                              (" --asm_file_name={}/asm_test/{}".format(
-                                  output_dir, test['test'])) + \
-                              (" --log_file_name={}/sim_{}_{}{}.log ".format(
-                                  output_dir,
-                                  test['test'], i, log_suffix)) + \
-                              (" --target=%s " % (target)) + \
-                              (" --gen_test=%s " % (test['gen_test'])) + \
-                              (" --seed={} ".format(rand_seed))
+                            (" --num_of_tests={}".format(test_cnt)) + \
+                            (" --start_idx={}".format(i * batch_size)) + \
+                            (" --asm_file_name={}/asm_test/{}".format(
+                                output_dir, test['test'])) + \
+                            (" --log_file_name={}/sim_{}_{}{}.log ".format(
+                                output_dir,
+                                test['test'], i, log_suffix)) + \
+                            (" --target=%s " % (target)) + \
+                            (" --gen_test=%s " % (test['gen_test'])) + \
+                            (" --seed={} ".format(rand_seed))
                     else:
                         cmd = lsf_cmd + " " + sim_cmd.rstrip() + \
-                              (" +UVM_TESTNAME={} ".format(test['gen_test'])) + \
-                              (" +num_of_tests={} ".format(test_cnt)) + \
-                              (" +start_idx={} ".format(i * batch_size)) + \
-                              (" +asm_file_name={}/asm_test/{} ".format(
-                                  output_dir, test['test'])) + \
-                              (" -l {}/sim_{}_{}{}.log ".format(
-                                  output_dir, test['test'], i, log_suffix))
+                            (" +UVM_TESTNAME={} ".format(test['gen_test'])) + \
+                            (" +num_of_tests={} ".format(test_cnt)) + \
+                            (" +start_idx={} ".format(i * batch_size)) + \
+                            (" +asm_file_name={}/asm_test/{} ".format(
+                                output_dir, test['test'])) + \
+                            (" -l {}/sim_{}_{}{}.log ".format(
+                                output_dir, test['test'], i, log_suffix))
                     if verbose and simulator != "pyflow":
                         cmd += "+UVM_VERBOSITY=UVM_HIGH "
                     cmd = re.sub("<seed>", str(rand_seed), cmd)
@@ -333,7 +335,7 @@ def do_simulate(sim_cmd, simulator, test_list, cwd, sim_opts, seed_gen,
                     sim_seed[test_id] = str(rand_seed)
                     if "gen_opts" in test:
                         if simulator == "pyflow":
-                            test['gen_opts'] = re.sub("\+", "--",
+                            test['gen_opts'] = re.sub(r"\+", "--",
                                                       test['gen_opts'])
                             cmd += test['gen_opts']
                         else:
@@ -525,7 +527,8 @@ def run_assembly(asm_test, iss_yaml, isa, mabi, gcc_opts, iss_opts, output_dir,
         logging.info("[{}] Running ISS simulation: {}".format(iss, elf))
         cmd = get_iss_cmd(base_cmd, elf, log)
         run_cmd(cmd, 10, debug_cmd=debug_cmd)
-        logging.info("[{}] Running ISS simulation: {} ...done".format(iss, elf))
+        logging.info(
+            "[{}] Running ISS simulation: {} ...done".format(iss, elf))
     if len(iss_list) == 2:
         compare_iss_log(iss_list, log_list, report)
 
@@ -617,7 +620,8 @@ def run_c(c_test, iss_yaml, isa, mabi, gcc_opts, iss_opts, output_dir,
         logging.info("[{}] Running ISS simulation: {}".format(iss, elf))
         cmd = get_iss_cmd(base_cmd, elf, log)
         run_cmd(cmd, 10, debug_cmd=debug_cmd)
-        logging.info("[{}] Running ISS simulation: {} ...done".format(iss, elf))
+        logging.info(
+            "[{}] Running ISS simulation: {} ...done".format(iss, elf))
     if len(iss_list) == 2:
         compare_iss_log(iss_list, log_list, report)
 
@@ -640,7 +644,8 @@ def run_c_from_dir(c_test_dir, iss_yaml, isa, mabi, gcc_opts, iss,
     result = run_cmd("find {} -name \"*.c\"".format(c_test_dir))
     if result:
         c_list = result.splitlines()
-        logging.info("Found {} c tests under {}".format(len(c_list), c_test_dir))
+        logging.info("Found {} c tests under {}".format(
+            len(c_list), c_test_dir))
         for c_file in c_list:
             run_c(c_file, iss_yaml, isa, mabi, gcc_opts, iss, output_dir,
                   setting_dir, debug_cmd)
@@ -669,7 +674,8 @@ def iss_sim(test_list, output_dir, iss_list, iss_yaml, iss_opts,
     """
     for iss in iss_list.split(","):
         log_dir = ("{}/{}_sim".format(output_dir, iss))
-        base_cmd = parse_iss_yaml(iss, iss_yaml, isa, priv, setting_dir, debug_cmd)
+        base_cmd = parse_iss_yaml(
+            iss, iss_yaml, isa, priv, setting_dir, debug_cmd)
         base_cmd += iss_opts
         logging.info("{} sim log dir: {}".format(iss, log_dir))
         run_cmd_output(["mkdir", "-p", log_dir])
@@ -791,6 +797,8 @@ def parse_args(cwd):
                             rv64imafdc")
     parser.add_argument("-o", "--output", type=str,
                         help="Output directory name", dest="o")
+    parser.add_argument("-dt", "--dump-tests", action="store_true", default=False,
+                        help="Dump test names and quit", dest="dump_tests")
     parser.add_argument("-tl", "--testlist", type=str, default="",
                         help="Regression testlist", dest="testlist")
     parser.add_argument("-tn", "--test", type=str, default="all",
@@ -1007,14 +1015,24 @@ def main():
         args = parse_args(cwd)
         setup_logging(args.verbose)
 
+        if args.dump_tests:
+            matched_list = []
+            process_regression_list(args.testlist, args.test, args.iterations,
+                                    matched_list, cwd)
+            from pprint import pprint
+            for test_obj in matched_list:
+                print(test_obj['test'])
+            sys.exit(0)
+
         # Create output directory
         output_dir = create_output(args.o, args.noclean)
 
         if args.verilog_style_check:
             logging.debug("Run style check")
             style_err = run_cmd("verilog_style/run.sh")
-            if style_err: logging.info(
-                "Found style error: \nERROR: " + style_err)
+            if style_err:
+                logging.info(
+                    "Found style error: \nERROR: " + style_err)
 
         # Run any handcoded/directed assembly tests specified by args.asm_test
         if args.asm_test != "":
@@ -1093,7 +1111,8 @@ def main():
 
             if len(matched_list) == 0 and len(asm_directed_list) == 0 and len(
                     c_directed_list) == 0:
-                sys.exit("Cannot find {} in {}".format(args.test, args.testlist))
+                sys.exit("Cannot find {} in {}".format(
+                    args.test, args.testlist))
 
         # Run instruction generator
         if args.steps == "all" or re.match(".*gen.*", args.steps):
@@ -1146,7 +1165,8 @@ def main():
                                   args.debug)
                         else:
                             if not args.debug:
-                                logging.error('{} does not exist'.format(path_c_test))
+                                logging.error(
+                                    '{} does not exist'.format(path_c_test))
                                 sys.exit(RET_FAIL)
 
             # Run remaining tests using the instruction generator
