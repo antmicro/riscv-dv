@@ -1779,27 +1779,21 @@ class riscv_instr_cover_group;
 
   covergroup privileged_csr_cg with function sample(bit [11:0] csr);
     cp_csr : coverpoint csr {
-`ifndef WORKAROUND_COVERGROUP_PARSE_BINS
       bins pcsr[] = cp_csr with (item inside {implemented_csr});
-`endif
     }
   endgroup
 
   // Privileged CSR covergroup
   covergroup mcause_exception_cg with function sample(exception_cause_t exception);
     cp_exception: coverpoint exception {
-`ifndef WORKAROUND_COVERGROUP_PARSE_BINS
         bins exception[] = cp_exception with ((item inside {implemented_exception}));
-`endif
        // bins exception[] = cp_exception with ((item inside {exception_list}));
     }
   endgroup
 
   covergroup mcause_interrupt_cg with function sample(interrupt_cause_t interrupt);
     cp_interrupt: coverpoint interrupt {
-`ifndef WORKAROUND_COVERGROUP_PARSE_BINS
        bins interrupt[] = cp_interrupt with (item inside {implemented_interrupt});
-`endif
     }
   endgroup
 

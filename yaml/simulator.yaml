@@ -176,8 +176,7 @@
               -Wno-CASEINCOMPLETE
               -Wno-SYMRSVDWORD
               -DWORKAROUND_RANDOMIZE_COMPILE_ERROR
-              -DWORKAROUND_STD_RANDOMIZE_COMPILE_ERROR
-              -DWORKAROUND_COVERGROUP_PARSE_BINS"
+              -DWORKAROUND_STD_RANDOMIZE_COMPILE_ERROR"
   sim:
     cmd: >
       <out>/Vuvm <sim_opts> +verilator+seed+<seed>
