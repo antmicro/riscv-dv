@@ -175,7 +175,6 @@
               -Wno-NORETURN
               -Wno-CASEINCOMPLETE
               -Wno-SYMRSVDWORD
-              -DWORKAROUND_RANDOMIZE_COMPILE_ERROR
               -DWORKAROUND_STD_RANDOMIZE_COMPILE_ERROR"
   sim:
     cmd: >
