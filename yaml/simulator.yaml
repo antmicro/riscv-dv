@@ -157,25 +157,28 @@
     cmd:
       - "verilator
               --binary
+              --vpi
               <UVM_HOME>/src/uvm.sv
+              <UVM_HOME>/src/dpi/uvm_dpi.cc
               -f <cwd>/files.f
               -sv
-              +define+UVM_NO_DPI
               +incdir+<UVM_HOME>/src
+              +incdir+<UVM_HOME>/src/dpi
               +incdir+<setting>
               +incdir+<user_extension>
               -j <NPROC>
               -o <out>/Vuvm
               --output-groups <NPROC>
               -Wno-COVERIGN
-              -Wno-CONSTRAINTIGN
+              -Wno-UNSIGNED
               -Wno-ENUMVALUE
               -Wno-WIDTHEXPAND
               -Wno-WIDTHTRUNC
               -Wno-NORETURN
               -Wno-CASEINCOMPLETE
               -Wno-SYMRSVDWORD
-              -DWORKAROUND_STD_RANDOMIZE_COMPILE_ERROR"
+              -Wno-SIDEEFFECT
+              -Wno-SELRANGE"
   sim:
     cmd: >
       <out>/Vuvm <sim_opts> +verilator+seed+<seed>

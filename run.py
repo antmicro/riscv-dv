@@ -438,7 +438,7 @@ def gcc_compile(test_list, output_dir, isa, mabi, opts, debug_cmd):
                 logging.error("Cannot find assembly test: {}\n".format(asm))
                 sys.exit(RET_FAIL)
             # gcc compilation
-            cmd = ("{} -static -mcmodel=medany \
+            cmd = ("{} -static -mcmodel=medany -fno-pic \
              -fvisibility=hidden -nostdlib \
              -nostartfiles {} \
              -I{}/user_extension \
