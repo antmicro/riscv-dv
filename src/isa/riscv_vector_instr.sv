@@ -309,11 +309,6 @@ class riscv_vector_instr extends riscv_floating_point_instr;
   // Filter unsupported instructions based on configuration
   virtual function bit is_supported(riscv_instr_gen_config cfg);
     string name = instr_name.name();
-    // 19.2.2. Vector Add with Carry/Subtract with Borrow Reserved under EDIV>1
-    if ((cfg.vector_cfg.vtype.vediv > 1) &&
-        (instr_name inside {VADC, VSBC, VMADC, VMSBC})) begin
-      return 1'b0;
-    end
     // Disable widening/narrowing instruction when LMUL == 8
     if ((!cfg.vector_cfg.vec_narrowing_widening) &&
         (is_widening_instr || is_narrowing_instr)) begin
@@ -456,7 +451,7 @@ class riscv_vector_instr extends riscv_floating_point_instr;
       end
       VLX_FORMAT: begin
         if (sub_extension == "zvlsseg") begin
-          asm_str = $sformatf("%0s %0s,(%0s),%0s", add_nfields(get_instr_name(), "vlxseg"),
+          asm_str = $sformatf("%0s %0s,(%0s),%0s", add_nfields(get_instr_name(), "vloxseg"),
                                                    vd.name(), rs1.name(), vs2.name());
         end else begin
           asm_str = $sformatf("%0s %0s,(%0s),%0s", get_instr_name(),
@@ -465,7 +460,7 @@ class riscv_vector_instr extends riscv_floating_point_instr;
       end
       VSX_FORMAT: begin
         if (sub_extension == "zvlsseg") begin
-          asm_str = $sformatf("%0s %0s,(%0s),%0s", add_nfields(get_instr_name(), "vsxseg"),
+          asm_str = $sformatf("%0s %0s,(%0s),%0s", add_nfields(get_instr_name(), "vsoxseg"),
                                                    vs3.name(), rs1.name(), vs2.name());
         end else begin
           asm_str = $sformatf("%0s %0s,(%0s),%0s", get_instr_name(),

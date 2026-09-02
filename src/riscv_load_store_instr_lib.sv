@@ -673,9 +673,9 @@ class riscv_vector_load_store_instr_stream extends riscv_mem_access_stream;
         end
       end
       INDEXED : begin
-        allowed_instr = {VLXEI_V, VSXEI_V, VSUXEI_V, allowed_instr};
+        allowed_instr = {VLOXEI_V, VSOXEI_V, VSUXEI_V, allowed_instr};
         if (cfg.vector_cfg.enable_zvlsseg) begin
-          allowed_instr = {VLXSEGEI_V, VSXSEGEI_V, VSUXSEGEI_V, allowed_instr};
+          allowed_instr = {VLOXSEGEI_V, VSOXSEGEI_V, VSUXSEGEI_V, allowed_instr};
         end
       end
     endcase

@@ -546,15 +546,14 @@ class riscv_asm_program_gen extends uvm_object;
   virtual function void init_vec_gpr();
     int SEW;
     int LMUL;
-    int EDIV = 1;
     int len = (ELEN <= XLEN) ? ELEN : XLEN;
     int num_elements = VLEN / len;
     if (!(RVV inside {supported_isa})) return;
     LMUL = 1;
     SEW = (ELEN <= XLEN) ? ELEN : XLEN;
     instr_stream.push_back($sformatf("li x%0d, %0d", cfg.gpr[1], cfg.vector_cfg.vl));
-    instr_stream.push_back($sformatf("%svsetvli x%0d, x%0d, e%0d, m%0d, d%0d",
-                                     indent, cfg.gpr[0], cfg.gpr[1], SEW, LMUL, EDIV));
+    instr_stream.push_back($sformatf("%svsetvli x%0d, x%0d, e%0d, m%0d, tu, mu",
+                                     indent, cfg.gpr[0], cfg.gpr[1], SEW, LMUL));
     instr_stream.push_back("vec_reg_init:");
 
     // Vector registers will be initialized using one of the following three methods
@@ -1640,13 +1639,14 @@ class riscv_asm_program_gen extends uvm_object;
     end else begin
       lmul = $sformatf("m%0d", cfg.vector_cfg.vtype.vlmul);
     end
-    instr_stream.push_back($sformatf("%svsetvli x%0d, x%0d, e%0d, %0s, d%0d",
+    instr_stream.push_back($sformatf("%svsetvli x%0d, x%0d, e%0d, %0s, t%0s, m%0s",
                                      indent,
                                      cfg.gpr[0],
                                      cfg.gpr[1],
                                      cfg.vector_cfg.vtype.vsew,
                                      lmul,
-                                     cfg.vector_cfg.vtype.vediv));
+                                     cfg.vector_cfg.vtype.vta == 1'b0 ? "u" : "a",
+                                     cfg.vector_cfg.vtype.vma == 1'b0 ? "u" : "a"));
   endfunction
 
 endclass

@@ -634,8 +634,8 @@ package riscv_instr_pkg;
     VSE_V,
     VLSE_V,
     VSSE_V,
-    VLXEI_V,
-    VSXEI_V,
+    VLOXEI_V,
+    VSOXEI_V,
     VSUXEI_V,
     VLEFF_V,
     // Segmented load/store instruction
@@ -644,8 +644,8 @@ package riscv_instr_pkg;
     VLSEGEFF_V,
     VLSSEGE_V,
     VSSSEGE_V,
-    VLXSEGEI_V,
-    VSXSEGEI_V,
+    VLOXSEGEI_V,
+    VSOXSEGEI_V,
     VSUXSEGEI_V,
     // Vector AMO instruction
     // EEW vector AMOs
@@ -1305,7 +1305,8 @@ package riscv_instr_pkg;
     bit ill;
     bit fractional_lmul;
     bit [XLEN-2:7] reserved;
-    int vediv;
+    bit vta;
+    bit vma;
     int vsew;
     int vlmul;
   } vtype_t;
