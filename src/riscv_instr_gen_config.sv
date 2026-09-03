@@ -266,7 +266,7 @@ class riscv_instr_gen_config extends uvm_object;
   bit                    enable_zbs_extension;
   bit                    enable_zcb_extension;
 
-  b_ext_group_t          enable_bitmanip_groups[] = {ZBB, ZBS, ZBP, ZBE, ZBF, ZBC, ZBR, ZBM, ZBT,
+  b_ext_group_t          enable_bitmanip_groups[] = {ZBB, ZBS, ZBP, ZBE, ZBF, ZBC, ZBR, ZBM, ZBT, ZBA,
                                                      ZB_TMP};
 
   //-----------------------------------------------------------------------------
@@ -549,6 +549,7 @@ class riscv_instr_gen_config extends uvm_object;
   function new (string name = "");
     string s;
     riscv_instr_group_t march_isa[];
+    riscv_instr_group_t temp_isa[];
     super.new(name);
     init_delegation();
     inst = uvm_cmdline_processor::get_inst();
@@ -609,6 +610,15 @@ class riscv_instr_gen_config extends uvm_object;
     get_bool_arg_value("+enable_floating_point=", enable_floating_point);
     get_bool_arg_value("+enable_vector_extension=", enable_vector_extension);
     get_bool_arg_value("+enable_b_extension=", enable_b_extension);
+    // 29.1.1 The B standard extension comprises instructions provided by the Zba, Zbb and Zbs
+    // extensions
+    if (enable_b_extension) begin
+      foreach (enable_bitmanip_groups[i]) begin
+        if (enable_bitmanip_groups[i] == ZBA) enable_zba_extension = 1;
+        if (enable_bitmanip_groups[i] == ZBB) enable_zbb_extension = 1;
+        if (enable_bitmanip_groups[i] == ZBS) enable_zbs_extension = 1;
+      end
+    end
     get_bool_arg_value("+enable_zba_extension=", enable_zba_extension);
     get_bool_arg_value("+enable_zbb_extension=", enable_zbb_extension);
     get_bool_arg_value("+enable_zbc_extension=", enable_zbc_extension);
@@ -635,6 +645,41 @@ class riscv_instr_gen_config extends uvm_object;
     // Directed march list from the runtime options, ex. RV32I, RV32M etc.
     cmdline_enum_processor #(riscv_instr_group_t)::get_array_values("+march=", 1'b0, march_isa);
     if (march_isa.size != 0) riscv_instr_pkg::supported_isa = march_isa;
+
+    // 29.1.1 The B standard extension comprises instructions provided by the Zba, Zbb and Zbs
+    // extensions
+    if (enable_b_extension) begin
+      temp_isa = riscv_instr_pkg::supported_isa;
+      if (RV32B inside {temp_isa}) begin
+        if (!(RV32ZBA inside {temp_isa}) && enable_zba_extension) begin
+          temp_isa = new[temp_isa.size() + 1](temp_isa);
+          temp_isa[temp_isa.size() - 1] = RV32ZBA;
+        end
+        if (!(RV32ZBB inside {temp_isa}) && enable_zbb_extension) begin
+          temp_isa = new[temp_isa.size() + 1](temp_isa);
+          temp_isa[temp_isa.size() - 1] = RV32ZBB;
+        end
+        if (!(RV32ZBS inside {temp_isa}) && enable_zbs_extension) begin
+          temp_isa = new[temp_isa.size() + 1](temp_isa);
+          temp_isa[temp_isa.size() - 1] = RV32ZBS;
+        end
+      end
+      if (RV64B inside {temp_isa}) begin
+        if (!(RV64ZBA inside {temp_isa}) && enable_zba_extension) begin
+          temp_isa = new[temp_isa.size() + 1](temp_isa);
+          temp_isa[temp_isa.size() - 1] = RV64ZBA;
+        end
+        if (!(RV64ZBB inside {temp_isa}) && enable_zbb_extension) begin
+          temp_isa = new[temp_isa.size() + 1](temp_isa);
+          temp_isa[temp_isa.size() - 1] = RV64ZBB;
+        end
+        if (!(RV64ZBS inside {temp_isa}) && enable_zbs_extension) begin
+          temp_isa = new[temp_isa.size() + 1](temp_isa);
+          temp_isa[temp_isa.size() - 1] = RV64ZBS;
+        end
+      end
+      riscv_instr_pkg::supported_isa = temp_isa;
+    end
 
     if (!(RV32C inside {supported_isa})) begin
       disable_compressed_instr = 1;

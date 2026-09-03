@@ -202,40 +202,6 @@ package riscv_instr_pkg;
     BINVI,
     BSET,
     BSETI,
-    // RV32B instructions
-    // Remaining bitmanip instructions of draft v.0.93 not ratified in v.1.00 (Zba, Zbb, Zbc, Zbs).
-    GORC,
-    GORCI,
-    CMIX,
-    CMOV,
-    PACK,
-    PACKU,
-    PACKH,
-    XPERM_N,
-    XPERM_B,
-    XPERM_H,
-    SLO,
-    SRO,
-    SLOI,
-    SROI,
-    GREV,
-    GREVI,
-    FSL,
-    FSR,
-    FSRI,
-    CRC32_B,
-    CRC32_H,
-    CRC32_W,
-    CRC32C_B,
-    CRC32C_H,
-    CRC32C_W,
-    SHFL,
-    UNSHFL,
-    SHFLI,
-    UNSHFLI,
-    BCOMPRESS,
-    BDECOMPRESS,
-    BFP,
     // RV64ZBA instructions
     ADD_UW,
     SH1ADD_UW,
@@ -249,32 +215,6 @@ package riscv_instr_pkg;
     ROLW,
     RORW,
     RORIW,
-    //RV64B instructions
-    // Remaining bitmanip instructions of draft v.0.93 not ratified in v.1.00 (Zba, Zbb, Zbc, Zbs).
-    BMATOR,
-    BMATXOR,
-    BMATFLIP,
-    CRC32_D,
-    CRC32C_D,
-    SHFLW,
-    UNSHFLW,
-    BCOMPRESSW,
-    BDECOMPRESSW,
-    BFPW,
-    SLOW,
-    SROW,
-    SLOIW,
-    SROIW,
-    GREVW,
-    GREVIW,
-    FSLW,
-    FSRW,
-    FSRIW,
-    GORCW,
-    GORCIW,
-    PACKW,
-    PACKUW,
-    XPERM_W,
     // RV32ZCB
     C_LBU,
     C_LHU,
@@ -1558,7 +1498,6 @@ package riscv_instr_pkg;
   typedef class riscv_zbc_instr;
   typedef class riscv_zbs_instr;
   typedef class riscv_zcb_instr;
-  typedef class riscv_b_instr;
   `include "riscv_instr_gen_config.sv"
   `include "isa/riscv_instr.sv"
   `include "isa/riscv_amo_instr.sv"
@@ -1566,7 +1505,6 @@ package riscv_instr_pkg;
   `include "isa/riscv_zbb_instr.sv"
   `include "isa/riscv_zbc_instr.sv"
   `include "isa/riscv_zbs_instr.sv"
-  `include "isa/riscv_b_instr.sv"
   `include "isa/riscv_csr_instr.sv"
   `include "isa/riscv_floating_point_instr.sv"
   `include "isa/riscv_vector_instr.sv"
@@ -1578,7 +1516,6 @@ package riscv_instr_pkg;
   `include "isa/rv32fc_instr.sv"
   `include "isa/rv32f_instr.sv"
   `include "isa/rv32i_instr.sv"
-  `include "isa/rv32b_instr.sv"
   `include "isa/rv32zba_instr.sv"
   `include "isa/rv32zbb_instr.sv"
   `include "isa/rv32zbc_instr.sv"
@@ -1588,7 +1525,6 @@ package riscv_instr_pkg;
   `include "isa/rv64zcb_instr.sv"
   `include "isa/rv32m_instr.sv"
   `include "isa/rv64a_instr.sv"
-  `include "isa/rv64b_instr.sv"
   `include "isa/rv64zba_instr.sv"
   `include "isa/rv64zbb_instr.sv"
   `include "isa/rv64c_instr.sv"
