@@ -4,11 +4,17 @@ name: Spike Build
 
 on:
   workflow_call:
+    outputs:
+      cache_key:
+        description: 'Cache key used to retrieve tool'
+        value: ${{ jobs.spike.outputs.cache_key }}
 
 jobs:
-  verilator:
+  spike:
     name: Build Spike
     runs-on: ubuntu-latest
+    outputs:
+      cache_key: ${{ steps.cache_metadata.outputs.cache_key }}
     env:
       TOOL_NAME: spike
       TOOL_VERSION: d70ea67d
@@ -18,23 +24,18 @@ jobs:
       - name: Setup Cache Metadata
         id: cache_metadata
         run: |
-          cache_date=$(date +"%Y_%m_%d")
-          cache_name=cache_${{ env.TOOL_NAME }}_${{ env.TOOL_VERSION }}
-          echo "Cache date: "$cache_date
-          echo "Cache name: "$cache_name
-          echo "cache_date=$cache_date" >> "$GITHUB_ENV"
-          echo "cache_name=$cache_name" >> "$GITHUB_ENV"
+          cache_key=cache_${{ env.TOOL_NAME }}_${{ env.TOOL_VERSION }}
+          echo "cache_key=$cache_key" >> $GITHUB_OUTPUT
 
       - name: Setup cache
-        uses: actions/cache@v3
+        uses: actions/cache@v6.1.0
         id: cache
         timeout-minutes: 60
         with:
           path: |
             /opt/spike
             /opt/spike/.cache
-          key: ${{ env.cache_name }}_${{ env.cache_date }}
-          restore-keys: ${{ env.cache_name }}_
+          key: ${{ steps.cache_metadata.outputs.cache_key }}
 
       - name: Install prerequisites
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}
