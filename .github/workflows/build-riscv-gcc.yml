@@ -1,0 +1,54 @@
+name: RISCV-GCC Build
+
+on:
+  workflow_call:
+
+jobs:
+  verilator:
+    name: Prepare RISCV-GCC
+    runs-on: ubuntu-latest
+
+    env:
+      TOOL_NAME: riscv-gcc
+      TOOL_VERSION: d118e53
+      DEBIAN_FRONTEND: "noninteractive"
+
+    steps:
+      - name: Setup Cache Metadata
+        id: cache_metadata
+        run: |
+          cache_date=$(date +"%Y_%m_%d")
+          cache_name=cache_${{ env.TOOL_NAME }}_${{ env.TOOL_VERSION }}
+          echo "Cache date: "$cache_date
+          echo "Cache name: "$cache_name
+          echo "cache_date=$cache_date" >> "$GITHUB_ENV"
+          echo "cache_name=$cache_name" >> "$GITHUB_ENV"
+
+      - name: Setup cache
+        uses: actions/cache@v6.1.0
+        id: cache
+        timeout-minutes: 60
+        with:
+          path: |
+            /opt/riscv-gcc/
+            /opt/riscv-gcc/.cache
+          key: ${{ env.cache_name }}_${{ env.cache_date }}
+          restore-keys: ${{ env.cache_name }}_
+
+      - name: Install prerequisites
+        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+        run: |
+          apt-get -yq update > /dev/null && apt-get -yq upgrade > /dev/null
+          apt-get -yq install autoconf automake autotools-dev curl python3 python3-pip \
+            python3-tomli libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison \
+            flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev meson ninja-build \
+            git cmake libglib2.0-dev expect device-tree-compiler libslirp-dev libzstd-dev libncurses-dev > /dev/null
+
+      - name: Build gcc
+        if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+        run: |
+          git clone https://github.com/riscv/riscv-gnu-toolchain -b 2026.08.27
+          pushd riscv-gnu-toolchain/
+            ./configure --prefix=/opt/riscv-gcc/ --enable-picolibc
+            make -j`nproc` picolibc
+          popd
