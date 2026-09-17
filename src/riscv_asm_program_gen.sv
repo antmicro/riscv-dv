@@ -1198,11 +1198,13 @@ class riscv_asm_program_gen extends uvm_object;
   // TODO: handshake the corret Xcause CSR based on delegation setup
   virtual function void gen_illegal_instr_handler(int hart);
     string instr[$];
+    int offset = 4;
     gen_signature_handshake(instr, CORE_STATUS, ILLEGAL_INSTR_EXCEPTION);
     gen_signature_handshake(.instr(instr), .signature_type(WRITE_CSR), .csr(MCAUSE));
+    if (XLEN == 64) offset = 8;
     instr = {instr,
             $sformatf("csrr  x%0d, 0x%0x", cfg.gpr[0], MEPC),
-            $sformatf("addi  x%0d, x%0d, 4", cfg.gpr[0], cfg.gpr[0]),
+            $sformatf("addi  x%0d, x%0d, %0d", cfg.gpr[0], cfg.gpr[0], offset),
             $sformatf("csrw  0x%0x, x%0d", MEPC, cfg.gpr[0])
     };
     pop_gpr_from_kernel_stack(MSTATUS, MSCRATCH, cfg.mstatus_mprv, cfg.sp, cfg.tp, instr);
