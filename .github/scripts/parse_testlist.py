@@ -15,12 +15,19 @@ def parse_yaml(path: str) -> Generator[str, None, None]:
             yield test['test']
 
 
+def main() -> None:
+    if len(sys.argv) <= 1:
+        return;
+
+    target_tests:list[dict] = []
+    for target in sys.argv[1:]:
+        testlist = list(parse_yaml(f"target/{target}/testlist.yaml"));
+        # remove, will cause incomplete sim, need customized RTL
+        testlist.remove("riscv_csr_test")
+        target_tests += [{"target":target, "test": test} for test in testlist]
+
+    print(dumps(target_tests))
+
+
 if __name__ == "__main__":
-    if len(sys.argv) == 2:
-        testlist = parse_yaml(f'target/{sys.argv[1]}/testlist.yaml')
-    else:
-        testlist = parse_yaml('yaml/base_testlist.yaml')
-    testlist = list(testlist)
-    # remove, will cause incomplete sim, need customized RTL
-    testlist.remove("riscv_csr_test")
-    print(dumps(testlist))
+    main()
