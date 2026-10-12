@@ -165,16 +165,14 @@
               +incdir+<user_extension>
               -j `nproc`
               -o <out>/Vuvm
-              -Wno-COVERIGN
-              -Wno-ENUMVALUE
-              -Wno-WIDTHEXPAND
               -Wno-WIDTHTRUNC
-              -Wno-NORETURN
-              -Wno-UNSIGNED
+              -Wno-WIDTHEXPAND
+              -Wno-SELRANGE
+              -Wno-ENUMVALUE
+              -Wno-COVERIGN
               -Wno-CASEINCOMPLETE
               -Wno-SYMRSVDWORD
-              -Wno-SIDEEFFECT
-              -Wno-SELRANGE"
+              -Wno-UNSIGNED"
   sim:
     cmd: >
       <out>/Vuvm <sim_opts> +verilator+seed+<seed>
