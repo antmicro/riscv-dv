@@ -44,8 +44,7 @@ jobs:
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}
         run: |
           sudo apt -qqy update && sudo apt -qqy --no-install-recommends install \
-            git ccache help2man libfl-dev libsystemc-dev mold build-essential \
-            autoconf bison
+            git libfl-dev mold build-essential autoconf bison
 
       - name: Checkout Verilator
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}
