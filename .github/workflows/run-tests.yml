@@ -75,12 +75,10 @@ jobs:
 
       - name: Checkout UVM Verilator
         if: steps.cache-generator.outputs.cache-hit != 'true'
-        uses: actions/checkout@v7.0.1
-        with:
-          repository: antmicro/uvm-verilator
-          ref: ${{ env.UVM_VERSION }}
-          path: uvm-verilator
-          persist-credentials: false
+        run: |
+          git init uvm-verilator
+          git -C uvm-verilator fetch --depth 1 https://github.com/antmicro/uvm-verilator "$UVM_VERSION"
+          git -C uvm-verilator checkout FETCH_HEAD
 
       - name: Move UVM Verilator
         if: steps.cache-generator.outputs.cache-hit != 'true'

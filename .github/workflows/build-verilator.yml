@@ -49,12 +49,10 @@ jobs:
 
       - name: Checkout Verilator
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}
-        uses: actions/checkout@v7.0.1
-        with:
-          repository: antmicro/verilator
-          ref: ${{ env.TOOL_VERSION }}
-          path: verilator
-          persist-credentials: false
+        run: |
+          git init verilator
+          git -C verilator fetch --depth 1 https://github.com/antmicro/verilator "$TOOL_VERSION"
+          git -C verilator checkout FETCH_HEAD
 
       - name: Build Verilator
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}
