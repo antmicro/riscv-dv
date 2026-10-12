@@ -151,10 +151,10 @@
           -covtest <test_id>.<seed>
 
 - tool: verilator
-  env_var: UVM_HOME,NPROC,VERILATOR_PATH
+  env_var: UVM_HOME
   compile:
     cmd:
-      - "<VERILATOR_PATH>/bin/verilator
+      - "verilator
               --binary
               --vpi
               <UVM_HOME>/src/uvm.sv

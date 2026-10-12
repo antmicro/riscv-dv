@@ -70,9 +70,8 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y ccache build-essential mold z3
-          echo "NPROC=$(nproc)" >> $GITHUB_ENV
           echo "UVM_HOME=/opt/uvm-verilator" >> $GITHUB_ENV
-          echo "VERILATOR_PATH=${{ needs.build-verilator.outputs.install_prefix }}" >> $GITHUB_ENV
+          echo "${{ needs.build-verilator.outputs.install_prefix }}/bin" >> $GITHUB_PATH
 
       - name: Checkout UVM Verilator
         if: steps.cache-generator.outputs.cache-hit != 'true'
@@ -112,7 +111,7 @@ jobs:
           python3 run.py --simulator verilator --co \
             --target ${{ matrix.target }} \
             -v -o out 2>&1 | tee test/build_generator.log
-          $VERILATOR_PATH/bin/verilator --version
+          verilator --version
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -181,8 +180,6 @@ jobs:
         run: |
           chmod +x out/Vuvm
           echo "UVM_HOME=unused" >> $GITHUB_ENV
-          echo "VERILATOR_PATH=unused" >> $GITHUB_ENV
-          echo "NPROC=unused" >> $GITHUB_ENV
 
       - name: Run Tests
         run: |
