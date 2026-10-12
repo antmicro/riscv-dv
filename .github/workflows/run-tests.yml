@@ -23,7 +23,8 @@ jobs:
       - id: test-types
         name: Prepare test types
         run: |
-          python3 -m pip install pyyaml --break-system-packages
+          python3 -m venv .venv && source .venv/bin/activate
+          python3 -m pip install pyyaml
           targets_json='["rv32i", "multi_harts", "rv32imc" ]'
           echo "targets=$targets_json" | tee -a $GITHUB_OUTPUT
           python3 .github/scripts/parse_testlist.py --simulator verilator $(echo $targets_json | jq -r '.[]') > verilator_tests.list
