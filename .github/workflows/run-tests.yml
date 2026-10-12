@@ -33,8 +33,8 @@ jobs:
       - id: hash
         name: Prepare files' hash
         run: |
-          shopt -s globstar nullglob
-          sha256sum **/*.sv **/*.svh files.f **/*.py **/*.yaml > file.hash
+          files=$(find .  \( -name '*.sv' -o -name '*.svh' -o -name '*.py' -o -name '*.yaml' \) -type f | sort)
+          { sha256sum $files; sha256sum files.f; } > file.hash
           echo "files-hash=$(cat file.hash | cut -d\  -f1 | sha256sum | cut -d\  -f1)" | tee -a $GITHUB_OUTPUT
 
   build-generator:
