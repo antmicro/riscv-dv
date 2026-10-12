@@ -163,7 +163,7 @@
               +incdir+<UVM_HOME>/src
               +incdir+<setting>
               +incdir+<user_extension>
-              -j <NPROC>
+              -j `nproc`
               -o <out>/Vuvm
               -Wno-COVERIGN
               -Wno-ENUMVALUE
