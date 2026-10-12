@@ -160,14 +160,11 @@
               <UVM_HOME>/src/uvm.sv
               <UVM_HOME>/src/dpi/uvm_dpi.cc
               -f <cwd>/files.f
-              -sv
               +incdir+<UVM_HOME>/src
-              +incdir+<UVM_HOME>/src/dpi
               +incdir+<setting>
               +incdir+<user_extension>
               -j <NPROC>
               -o <out>/Vuvm
-              --output-groups <NPROC>
               -Wno-COVERIGN
               -Wno-ENUMVALUE
               -Wno-WIDTHEXPAND

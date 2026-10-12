@@ -2,7 +2,8 @@ name: run-tests
 
 on:
   push:
-  pull_request:
+  # TODO :: Here
+  # pull_request:
 
 jobs:
   build-spike:
