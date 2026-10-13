@@ -151,16 +151,15 @@
           -covtest <test_id>.<seed>
 
 - tool: verilator
-  env_var: UVM_HOME
   compile:
     cmd:
       - "verilator
               --binary
               --vpi
-              <UVM_HOME>/src/uvm.sv
-              <UVM_HOME>/src/dpi/uvm_dpi.cc
+              $UVM_HOME/src/uvm.sv
+              $UVM_HOME/src/dpi/uvm_dpi.cc
               -f <cwd>/files.f
-              +incdir+<UVM_HOME>/src
+              +incdir+$UVM_HOME/src
               +incdir+<setting>
               +incdir+<user_extension>
               -j `nproc`

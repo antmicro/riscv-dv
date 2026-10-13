@@ -174,11 +174,10 @@ jobs:
         with:
           name: generator_${{ matrix.target }}
 
-      - name: Fix environment
+      - name: Fix generator permissions
         if: matrix.simulator == 'verilator'
         run: |
           chmod +x out/Vuvm
-          echo "UVM_HOME=unused" >> $GITHUB_ENV
 
       - name: Run Tests
         run: |
