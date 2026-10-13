@@ -18,7 +18,7 @@ jobs:
       tests: ${{ steps.test-types.outputs.tests }}
       hash: ${{ steps.hash.outputs.files-hash }}
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v4
       - id: test-types
         name: Prepare test types
         run: |
@@ -47,7 +47,7 @@ jobs:
           target: ${{ fromJSON(needs.generate-config.outputs.targets) }}
 
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v4
 
       - name: Setup Cache Metadata
         id: cache_metadata
@@ -57,7 +57,7 @@ jobs:
           echo "cache_generator=${cache_generator_key}_${files_hash}" | tee -a "$GITHUB_ENV"
 
       - name: Cache Code
-        uses: actions/cache@v6.1.0
+        uses: actions/cache@v4
         id: cache-generator
         timeout-minutes: 60
         with:
@@ -96,7 +96,7 @@ jobs:
       - name: Restore verilator cache
         if: steps.cache-generator.outputs.cache-hit != 'true'
         id: cache-verilator-restore
-        uses: actions/cache/restore@v6.1.0
+        uses: actions/cache/restore@v3
         with:
           path: |
             ${{ needs.build-verilator.outputs.install_prefix }}
@@ -131,7 +131,7 @@ jobs:
         include: ${{ fromJSON(needs.generate-config.outputs.tests) }}
 
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: sudo apt-get -qqy update && sudo apt-get -qqy install device-tree-compiler z3
@@ -153,7 +153,7 @@ jobs:
 
       - name: Restore Spike cache
         id: cache-spike-restore
-        uses: actions/cache/restore@v6.1.0
+        uses: actions/cache/restore@v3
         with:
           path: |
             /opt/spike
