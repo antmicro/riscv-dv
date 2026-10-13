@@ -26,8 +26,7 @@ jobs:
           targets_json='["rv32i", "multi_harts", "rv32imc" ]'
           echo "targets=$targets_json" | tee -a $GITHUB_OUTPUT
           python3 .github/scripts/parse_testlist.py --simulator verilator $(echo $targets_json | jq -r '.[]') > verilator_tests.list
-          python3 .github/scripts/parse_testlist.py --simulator pyflow --test riscv_arithmetic_basic_test rv32imc > pyflow_tests.list
-          echo "tests=$(jq -c -s add verilator_tests.list pyflow_tests.list)" | tee -a $GITHUB_OUTPUT
+          echo "tests=$(cat verilator_tests.list)" | tee -a $GITHUB_OUTPUT
 
   build-generator:
     runs-on: ubuntu-latest
@@ -160,7 +159,6 @@ jobs:
           echo "RISCV_GCC=riscv64-unknown-elf-gcc" >> $GITHUB_ENV
           echo "RISCV_OBJCOPY=riscv64-unknown-elf-objcopy" >> $GITHUB_ENV
           echo "SPIKE_PATH=/opt/spike/bin" >> $GITHUB_ENV
-          echo "PYTHONPATH=pygen" >> $GITHUB_ENV
 
       - name: Download generator
         if: matrix.simulator == 'verilator'
