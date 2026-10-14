@@ -48,9 +48,7 @@ jobs:
       - name: Checkout Verilator
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}
         run: |
-          git init verilator
-          git -C verilator fetch --depth 1 https://github.com/antmicro/verilator "$TOOL_VERSION"
-          git -C verilator checkout FETCH_HEAD
+          git clone https://github.com/antmicro/verilator --depth 1 --revision "$TOOL_VERSION" verilator
 
       - name: Build Verilator
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}

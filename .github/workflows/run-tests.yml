@@ -60,9 +60,7 @@ jobs:
 
       - name: Setup UVM
         run: |
-          git init $UVM_HOME
-          git -C $UVM_HOME fetch --depth 1 https://github.com/antmicro/uvm-verilator "$UVM_VERSION"
-          git -C $UVM_HOME checkout FETCH_HEAD
+          git clone https://github.com/antmicro/uvm-verilator --depth 1 --revision "$UVM_VERSION" $UVM_HOME
 
       - name: Setup python
         uses: actions/setup-python@v4
