@@ -18,21 +18,18 @@ def parse_yaml(path: str) -> Generator[str, None, None]:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--simulator", required=True)
-    parser.add_argument("--test", action="append")
     parser.add_argument("targets", nargs="+")
     args = parser.parse_args()
 
-    target_tests:list[dict] = []
+    target_tests: list[dict] = []
     for target in args.targets:
         testlist = list(parse_yaml(f"target/{target}/testlist.yaml"))
-        if args.test:
-            missing = set(args.test) - set(testlist)
-            if missing:
-                sys.exit(f"Tests not found for target {target}: {', '.join(sorted(missing))}")
-            testlist = [test for test in testlist if test in args.test]
         # riscv_csr_test will cause incomplete sim, need customized RTL
-        target_tests += [{"target":target, "test": test, "simulator": args.simulator} for test in testlist if test != "riscv_csr_test"]
+        target_tests += [
+            {"target": target, "test": test}
+            for test in testlist
+            if test != "riscv_csr_test"
+        ]
 
     print(dumps(target_tests))
 

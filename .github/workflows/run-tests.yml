@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       targets: ${{ steps.test-types.outputs.targets }}
-      tests: ${{ steps.test-types.outputs.tests }}
+      target_tests: ${{ steps.test-types.outputs.target_tests }}
     steps:
       - uses: actions/checkout@v4
       - id: test-types
@@ -23,23 +23,23 @@ jobs:
         run: |
           python3 -m venv .venv && source .venv/bin/activate
           python3 -m pip install pyyaml
-          targets_json='["rv32i", "multi_harts", "rv32imc" ]'
-          echo "targets=$targets_json" | tee -a $GITHUB_OUTPUT
-          python3 .github/scripts/parse_testlist.py --simulator verilator $(echo $targets_json | jq -r '.[]') > verilator_tests.list
-          echo "tests=$(cat verilator_tests.list)" | tee -a $GITHUB_OUTPUT
+          targets='["rv32i", "multi_harts", "rv32imc" ]'
+          echo "targets=$targets" | tee -a $GITHUB_OUTPUT
+          python3 .github/scripts/parse_testlist.py  $(echo $targets | jq -r '.[]') > target_tests.list
+          echo "target_tests=$(cat target_tests.list)" | tee -a $GITHUB_OUTPUT
 
   build-generator:
     runs-on: ubuntu-latest
     needs: [ generate-config, build-verilator ]
-    env:
-      UVM_VERSION: 578a46777ef0e0c9fa80e26d60ea4d100bb3cc84
-      CCACHE_DIR: /opt/generator/.ccache
-      CCACHE_MAX_SIZE: 2G
-
     strategy:
         fail-fast: false
         matrix:
           target: ${{ fromJSON(needs.generate-config.outputs.targets) }}
+    env:
+      UVM_VERSION: 578a46777ef0e0c9fa80e26d60ea4d100bb3cc84
+      UVM_HOME: /opt/uvm-verilator
+      CCACHE_DIR: /opt/generator/.ccache
+      CCACHE_MAXSIZE: 2G
 
     steps:
       - uses: actions/checkout@v4
@@ -49,25 +49,20 @@ jobs:
         with:
           path: /opt/generator/.ccache
           key: ccache_${{ matrix.target }}_${{ github.sha }}
-          restore-keys: |
-            ccache_${{ matrix.target }}_
+          restore-keys: ccache_${{ matrix.target }}_
 
       - name: Setup Environment
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y ccache build-essential mold z3
-          echo "UVM_HOME=/opt/uvm-verilator" >> $GITHUB_ENV
+          sudo apt-get install -y ccache build-essential mold
           echo "${{ needs.build-verilator.outputs.install_prefix }}/bin" >> $GITHUB_PATH
           ccache -z
 
-      - name: Checkout UVM Verilator
+      - name: Setup UVM
         run: |
-          git init uvm-verilator
-          git -C uvm-verilator fetch --depth 1 https://github.com/antmicro/uvm-verilator "$UVM_VERSION"
-          git -C uvm-verilator checkout FETCH_HEAD
-
-      - name: Move UVM Verilator
-        run: mv uvm-verilator /opt/uvm-verilator
+          git init $UVM_HOME
+          git -C $UVM_HOME fetch --depth 1 https://github.com/antmicro/uvm-verilator "$UVM_VERSION"
+          git -C $UVM_HOME checkout FETCH_HEAD
 
       - name: Setup python
         uses: actions/setup-python@v4
@@ -78,7 +73,6 @@ jobs:
       - run: python3 -m pip install -r requirements.txt
 
       - name: Restore verilator cache
-        id: cache-verilator-restore
         uses: actions/cache/restore@v3
         with:
           path: |
@@ -95,11 +89,9 @@ jobs:
           verilator --version
 
       - name: ccache stats
-        if: always()
         run: ccache -s
 
       - name: Save ccache
-        if: always()
         uses: actions/cache/save@v4
         with:
           path: /opt/generator/.ccache
@@ -121,19 +113,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJSON(needs.generate-config.outputs.tests) }}
+        include: ${{ fromJSON(needs.generate-config.outputs.target_tests) }}
+    env:
+      RISCV_GCC: riscv64-unknown-elf-gcc
+      RISCV_OBJCOPY: riscv64-unknown-elf-objcopy
+      SPIKE_PATH: /opt/spike/bin
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt-get -qqy update && sudo apt-get -qqy install device-tree-compiler z3
-
-      - name: Install cross-compiler
-        shell: bash
         run: |
-          echo "deb http://archive.ubuntu.com/ubuntu/ noble main universe" | sudo tee -a /etc/apt/sources.list > /dev/null
-          sudo apt -qqy update && sudo apt -qqy --no-install-recommends install gcc-riscv64-unknown-elf
+          sudo apt-get -qqy update
+          sudo apt-get -qqy install device-tree-compiler z3 gcc-riscv64-unknown-elf
           riscv64-unknown-elf-gcc --version
 
       - name: Setup python
@@ -145,7 +137,6 @@ jobs:
       - run: python3 -m pip install -r requirements.txt
 
       - name: Restore Spike cache
-        id: cache-spike-restore
         uses: actions/cache/restore@v3
         with:
           path: |
@@ -154,20 +145,12 @@ jobs:
           key: ${{ needs.build-spike.outputs.cache_key }}
           fail-on-cache-miss: true
 
-      - name: Set variables
-        run: |
-          echo "RISCV_GCC=riscv64-unknown-elf-gcc" >> $GITHUB_ENV
-          echo "RISCV_OBJCOPY=riscv64-unknown-elf-objcopy" >> $GITHUB_ENV
-          echo "SPIKE_PATH=/opt/spike/bin" >> $GITHUB_ENV
-
       - name: Download generator
-        if: matrix.simulator == 'verilator'
         uses: actions/download-artifact@v4
         with:
           name: generator_${{ matrix.target }}
 
       - name: Fix generator permissions
-        if: matrix.simulator == 'verilator'
         run: |
           chmod +x out/Vuvm
 
@@ -178,14 +161,14 @@ jobs:
             --target ${{ matrix.target }} --test ${{ matrix.test }} \
             --iss spike --iss_timeout 60 --gen_timeout 720 --start_seed 999 \
             --iterations 1 --batch_size 1 --noclean \
-            --simulator ${{ matrix.simulator }} \
+            --simulator verilator \
             --so -o out 2>&1 | tee -a test/generate.log
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: run_tests_log_${{ matrix.target }}_${{ matrix.test }}_${{ matrix.simulator }}
+          name: run_tests_log_verilator_${{ matrix.target }}_${{ matrix.test }}
           path: |
             test/*.log
             out/**/${{ matrix.test }}*.log
