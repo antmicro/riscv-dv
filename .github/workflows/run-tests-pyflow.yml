@@ -40,19 +40,16 @@ jobs:
           cache: 'pip'
       - run: python3 -m pip install -r requirements.txt
 
-      - name: Restore Spike cache
-        id: cache-spike-restore
-        uses: actions/cache/restore@v3
+      - name: Download spike
+        uses: actions/download-artifact@v4
         with:
-          path: |
-            /opt/spike
-            /opt/spike/.cache
-          key: ${{ needs.build-spike.outputs.cache_key }}
-          fail-on-cache-miss: true
+          name: spike
+          path: /opt/spike
 
       - name: Run Tests
         run: |
           set -eo pipefail
+          chmod +x /opt/spike/bin/spike
           python3 run.py \
             --target ${{ matrix.target }} --test ${{ matrix.test }} \
             --iss spike --iss_timeout 60 --gen_timeout 720 --start_seed 999 \

@@ -1,54 +1,34 @@
-# https://github.com/chipsalliance/Cores-VeeR-EL2/blob/774510e43f5408ec2b818db8f865027bc9be97b8/.github/workflows/build-spike.yml
-
 name: Spike Build
 
 on:
   workflow_call:
-    outputs:
-      cache_key:
-        description: 'Cache key used to retrieve tool'
-        value: ${{ jobs.spike.outputs.cache_key }}
 
 jobs:
   spike:
     name: Build Spike
     runs-on: ubuntu-latest
-    outputs:
-      cache_key: ${{ steps.cache_metadata.outputs.cache_key }}
     env:
-      TOOL_VERSION: d70ea67d
+      TOOL_VERSION: d70ea67df7e85a8d92a8baa254afde67c33c43a9
       DEBIAN_FRONTEND: "noninteractive"
 
     steps:
-      - name: Setup Cache Metadata
-        id: cache_metadata
-        run: |
-          cache_key=cache_spike_${{ env.TOOL_VERSION }}
-          echo "cache_key=$cache_key" >> $GITHUB_OUTPUT
-
       - name: Setup cache
         uses: actions/cache@v3
         id: cache
         with:
-          path: |
-            /opt/spike
-            /opt/spike/.cache
-          key: ${{ steps.cache_metadata.outputs.cache_key }}
+          path: /opt/spike
+          key: cache_spike_${{ env.TOOL_VERSION }}
 
       - name: Install prerequisites
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}
         run: |
           sudo apt -qqy update && sudo apt -qqy --no-install-recommends install \
-            git build-essential cmake ccache device-tree-compiler
+            git build-essential device-tree-compiler
 
       - name: Build Spike
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}
         run: |
-          export CCACHE_DIR=/opt/spike/.cache
-          ccache --show-config | grep cache_dir
           git clone https://github.com/riscv-software-src/riscv-isa-sim --depth 1 --revision "$TOOL_VERSION" spike
-          export CC="ccache gcc"
-          export CXX="ccache g++"
           pushd spike
             mkdir build
             cd build
@@ -58,4 +38,10 @@ jobs:
           popd
           rm -rf /opt/spike/include # Remove include and lib to save space
           rm -rf /opt/spike/lib
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: spike
+          path: /opt/spike
 

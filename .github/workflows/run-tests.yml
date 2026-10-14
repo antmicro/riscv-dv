@@ -51,12 +51,20 @@ jobs:
           key: ccache_${{ matrix.target }}_${{ github.sha }}
           restore-keys: ccache_${{ matrix.target }}_
 
+      - name: Download Verilator
+        uses: actions/download-artifact@v4
+        with:
+          name: verilator
+          path: /opt/verilator
+
       - name: Setup Environment
         run: |
           sudo apt-get update -y
           sudo apt-get install -y ccache build-essential mold
-          echo "${{ needs.build-verilator.outputs.install_prefix }}/bin" >> $GITHUB_PATH
           ccache -z
+          echo "/opt/verilator/bin/" >> $GITHUB_PATH
+          chmod +x /opt/verilator/bin/verilator /opt/verilator/bin/verilator_bin
+          /opt/verilator/bin/verilator --version
 
       - name: Setup UVM
         run: |
@@ -70,21 +78,12 @@ jobs:
           cache: 'pip'
       - run: python3 -m pip install -r requirements.txt
 
-      - name: Restore verilator cache
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            ${{ needs.build-verilator.outputs.install_prefix }}
-          key: ${{ needs.build-verilator.outputs.cache_key }}
-          fail-on-cache-miss: true
-
       - name: Build Generator
         run: |
           set -eo pipefail
           python3 run.py --simulator verilator --co \
             --target ${{ matrix.target }} \
             -v -o out 2>&1 | tee test/build_generator.log
-          verilator --version
 
       - name: ccache stats
         run: ccache -s
@@ -134,27 +133,22 @@ jobs:
           cache: 'pip'
       - run: python3 -m pip install -r requirements.txt
 
-      - name: Restore Spike cache
-        uses: actions/cache/restore@v3
+      - name: Download spike
+        uses: actions/download-artifact@v4
         with:
-          path: |
-            /opt/spike
-            /opt/spike/.cache
-          key: ${{ needs.build-spike.outputs.cache_key }}
-          fail-on-cache-miss: true
+          name: spike
+          path: /opt/spike
 
       - name: Download generator
         uses: actions/download-artifact@v4
         with:
           name: generator_${{ matrix.target }}
 
-      - name: Fix generator permissions
-        run: |
-          chmod +x out/Vuvm
-
       - name: Run Tests
         run: |
           set -eo pipefail
+          chmod +x out/Vuvm
+          chmod +x /opt/spike/bin/spike
           python3 run.py \
             --target ${{ matrix.target }} --test ${{ matrix.test }} \
             --iss spike --iss_timeout 60 --gen_timeout 720 --start_seed 999 \
