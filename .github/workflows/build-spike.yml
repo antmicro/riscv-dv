@@ -16,7 +16,6 @@ jobs:
     outputs:
       cache_key: ${{ steps.cache_metadata.outputs.cache_key }}
     env:
-      TOOL_NAME: spike
       TOOL_VERSION: d70ea67d
       DEBIAN_FRONTEND: "noninteractive"
 
@@ -24,7 +23,7 @@ jobs:
       - name: Setup Cache Metadata
         id: cache_metadata
         run: |
-          cache_key=cache_${{ env.TOOL_NAME }}_${{ env.TOOL_VERSION }}
+          cache_key=cache_spike_${{ env.TOOL_VERSION }}
           echo "cache_key=$cache_key" >> $GITHUB_OUTPUT
 
       - name: Setup cache
