@@ -61,7 +61,6 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get install -y ccache build-essential mold
-          ccache -z
           echo "/opt/verilator/bin/" >> $GITHUB_PATH
           chmod +x /opt/verilator/bin/verilator /opt/verilator/bin/verilator_bin
           /opt/verilator/bin/verilator --version
@@ -84,9 +83,6 @@ jobs:
           python3 run.py --simulator verilator --co \
             --target ${{ matrix.target }} \
             -v -o out 2>&1 | tee test/build_generator.log
-
-      - name: ccache stats
-        run: ccache -s
 
       - name: Save ccache
         uses: actions/cache/save@v4
